@@ -3,173 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFIDCLPC Store Management</title>
+    <title>BFIDC Furniture & Workshop Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(135deg, #f0f7f4 0%, #fdf5f5 100%);
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; min-height: 100vh; position: relative; }
         body::before {
-            content: "";
-            position: fixed;
-            top: 55%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 280px; height: 280px;
-            background-image: url('logo.jpg');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.12; 
-            z-index: -1;
-            pointer-events: none;
+            content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 300px; height: 300px; background-image: url('logo.jpg');
+            background-size: contain; background-repeat: no-repeat; opacity: 0.08; z-index: -1;
         }
     </style>
 </head>
-<body class="pb-24">
-    <header class="bg-[#014c22] text-white pt-10 pb-16 text-center shadow-lg rounded-b-[40px]">
+<body class="pb-20">
+    <header class="bg-[#014c22] text-white pt-8 pb-12 text-center rounded-b-[40px] shadow-2xl">
         <div class="flex flex-col items-center">
-            <div class="bg-white p-1 rounded-2xl mb-3 w-20 h-20 flex items-center justify-center border-2 border-yellow-400 shadow-xl overflow-hidden">
+            <div class="bg-white p-1 rounded-2xl mb-3 w-20 h-20 shadow-xl">
                 <img src="logo.jpg" alt="Logo" class="w-full h-full object-contain">
             </div>
-            <h1 class="text-2xl font-black uppercase tracking-tight">BFIDCLPC STORE</h1>
-            <p class="text-yellow-400 text-[10px] font-bold tracking-[4px] uppercase opacity-80">Inventory Management</p>
+            <h1 class="text-xl font-black">BFIDC FURNITURE & WORKSHOP</h1>
+            <p class="text-yellow-400 text-[10px] tracking-widest uppercase">Inventory Control System</p>
         </div>
     </header>
 
-    <nav class="sticky top-4 z-50 mx-6 -mt-8 bg-white/90 backdrop-blur rounded-2xl flex p-1 shadow-lg border border-white">
-        <button onclick="showTab('in')" id="btn-in" class="flex-1 py-3 text-[12px] font-bold rounded-xl bg-[#014c22] text-white">ইনকামিং</button>
-        <button onclick="showTab('out')" id="btn-out" class="flex-1 py-3 text-[12px] font-bold rounded-xl text-slate-500">আউটগোয়িং</button>
-        <button onclick="showTab('inv')" id="btn-inv" class="flex-1 py-3 text-[12px] font-bold rounded-xl text-slate-500">রিপোর্ট</button>
+    <nav class="sticky top-4 z-50 mx-4 -mt-6 bg-white/90 backdrop-blur rounded-2xl flex p-1 shadow-lg border">
+        <button onclick="showTab('in')" id="btn-in" class="flex-1 py-3 text-[11px] font-bold rounded-xl bg-[#014c22] text-white">এন্ট্রি</button>
+        <button onclick="showTab('out')" id="btn-out" class="flex-1 py-3 text-[11px] font-bold rounded-xl text-slate-500">ইস্যু (সেকশন)</button>
+        <button onclick="showTab('cat')" id="btn-cat" class="flex-1 py-3 text-[11px] font-bold rounded-xl text-slate-500">ক্যাটাগরি</button>
+        <button onclick="showTab('rep')" id="btn-rep" class="flex-1 py-3 text-[11px] font-bold rounded-xl text-slate-500">রিপোর্ট</button>
     </nav>
 
-    <main class="p-5 max-w-lg mx-auto space-y-6">
-        <section id="stock-in" class="tab-content active bg-white/80 p-6 rounded-3xl shadow-sm border border-white">
-            <h2 class="text-[#014c22] font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-circle-plus"></i> মালামাল এন্ট্রি</h2>
-            <div class="space-y-4">
-                <input type="text" id="inName" placeholder="মালামালের নাম" class="w-full p-4 bg-white rounded-xl border outline-none">
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="number" id="inPrice" placeholder="দর (৳)" class="w-full p-4 bg-white rounded-xl border">
-                    <input type="number" id="inQty" placeholder="পরিমাণ" class="w-full p-4 bg-white rounded-xl border">
+    <main class="p-4 max-w-xl mx-auto space-y-4">
+        
+        <section id="tab-cat" class="tab-content hidden bg-white p-5 rounded-3xl shadow-sm border">
+            <h2 class="font-bold text-[#014c22] mb-4"><i class="fa-solid fa-tags"></i> নতুন ক্যাটাগরি তৈরি</h2>
+            <div class="flex gap-2">
+                <input type="text" id="newCatName" placeholder="উদা: কাঠ, ইলেকট্রিক্যাল" class="flex-1 p-3 bg-slate-50 border rounded-xl outline-none">
+                <button onclick="addCategory()" class="bg-[#014c22] text-white px-5 rounded-xl font-bold text-sm">যোগ করুন</button>
+            </div>
+            <div id="catList" class="mt-4 flex flex-wrap gap-2 text-xs"></div>
+        </section>
+
+        <section id="tab-in" class="tab-content bg-white p-5 rounded-3xl shadow-sm border">
+            <h2 class="font-bold text-[#014c22] mb-4"><i class="fa-solid fa-cart-plus"></i> মালামাল ক্রয়/এন্ট্রি</h2>
+            <div class="space-y-3">
+                <select id="inCat" class="w-full p-3 bg-slate-50 border rounded-xl font-semibold"></select>
+                <input type="text" id="inName" placeholder="পণ্যের নাম (উদা: সেগুন কাঠ, সুইচ)" class="w-full p-3 bg-slate-50 border rounded-xl outline-none">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="inPrice" placeholder="দর (৳)" class="p-3 bg-slate-50 border rounded-xl">
+                    <input type="number" id="inQty" placeholder="পরিমাণ" class="p-3 bg-slate-50 border rounded-xl">
                 </div>
-                <button onclick="addStockIn()" class="w-full bg-[#014c22] text-white py-4 rounded-xl font-bold">সেভ করুন</button>
+                <button onclick="saveIn()" class="w-full bg-[#014c22] text-white py-3 rounded-xl font-bold">স্টোরে জমা করুন</button>
             </div>
         </section>
 
-        <section id="stock-out" class="tab-content hidden bg-white/80 p-6 rounded-3xl shadow-sm border border-white">
-            <h2 class="text-red-700 font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-minus-circle"></i> মালামাল ইস্যু</h2>
-            <div class="space-y-4">
-                <select id="outName" class="w-full p-4 bg-white rounded-xl border font-bold"></select>
-                <input type="number" id="outQty" placeholder="পরিমাণ" class="w-full p-4 bg-white rounded-xl border">
-                <button onclick="addStockOut()" class="w-full bg-red-700 text-white py-4 rounded-xl font-bold">ইস্যু কনফার্ম</button>
+        <section id="tab-out" class="tab-content hidden bg-white p-5 rounded-3xl shadow-sm border">
+            <h2 class="font-bold text-orange-700 mb-4"><i class="fa-solid fa-truck-ramp-box"></i> সেকশনে মালামাল প্রদান</h2>
+            <div class="space-y-3">
+                <select id="outSection" class="w-full p-3 bg-slate-50 border rounded-xl font-semibold text-slate-700">
+                    <option value="">সেকশন সিলেক্ট করুন</option>
+                    <option value="প্ল্যানার মিল">প্ল্যানার মিল</option>
+                    <option value="স-মিল">স-মিল</option>
+                    <option value="ওয়ার্কশপ">ওয়ার্কশপ</option>
+                    <option value="ইলেকট্রিক্যাল">ইলেকট্রিক্যাল সেকশন</option>
+                    <option value="ফার্নিচার শপ">ফার্নিচার শপ</option>
+                </select>
+                <select id="outItem" class="w-full p-3 bg-slate-50 border rounded-xl font-semibold"></select>
+                <input type="number" id="outQty" placeholder="কতটুকু নিচ্ছেন?" class="w-full p-3 bg-slate-50 border rounded-xl">
+                <button onclick="saveOut()" class="w-full bg-orange-700 text-white py-3 rounded-xl font-bold">ইস্যু কনফার্ম</button>
             </div>
         </section>
 
-        <section id="inventory" class="tab-content hidden bg-white/80 rounded-3xl shadow-sm border border-white overflow-hidden">
-            <div class="bg-[#014c22] p-5 text-white flex justify-between items-center">
-                <span class="font-bold">মজুদ খতিয়ান</span>
-                <span id="totalValue" class="font-black text-yellow-400">৳0</span>
+        <section id="tab-rep" class="tab-content hidden bg-white rounded-3xl shadow-sm border overflow-hidden">
+            <div class="bg-[#014c22] p-4 text-white flex justify-between items-center">
+                <span class="font-bold tracking-tight">বর্তমান স্টক রিপোর্ট</span>
+                <span id="totalValue" class="font-black text-yellow-400 text-sm">৳০</span>
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead class="bg-slate-50 text-slate-500">
-                        <tr><th class="p-4">বিবরণ</th><th class="p-4">মজুদ</th><th class="p-4">মূল্য</th></tr>
+                <table class="w-full text-[11px] text-left">
+                    <thead class="bg-slate-50 border-b">
+                        <tr><th class="p-3">বিবরণ</th><th class="p-3 text-center">ক্যাটাগরি</th><th class="p-3 text-center">মজুদ</th><th class="p-3 text-right">মূল্য</th></tr>
                     </thead>
-                    <tbody id="inventoryBody" class="divide-y"></tbody>
+                    <tbody id="repBody" class="divide-y"></tbody>
                 </table>
             </div>
-            <div class="p-4 bg-slate-50">
-                <button onclick="downloadBackup()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-file-excel"></i> ডাউনলোড ব্যাকআপ (Excel)
-                </button>
+            <div class="p-3 flex gap-2">
+                <button onclick="downloadBackup()" class="flex-1 py-3 bg-blue-600 text-white rounded-xl text-xs font-bold"><i class="fa-solid fa-download"></i> ব্যাকআপ</button>
+                <button onclick="clearAll()" class="py-3 px-4 bg-red-100 text-red-600 rounded-xl text-xs font-bold"><i class="fa-solid fa-trash"></i> মুছুন</button>
             </div>
         </section>
     </main>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('bfidc_pro_v2')) || { in: [], out: [] };
+        let db = JSON.parse(localStorage.getItem('bfidc_furniture_v1')) || { cats: ["কাঠ", "ইলেকট্রিক্যাল"], in: [], out: [] };
 
         function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(s => s.classList.add('hidden'));
-            document.getElementById('stock-' + (id === 'inv' ? 'inventory' : id)).classList.remove('hidden');
+            document.getElementById('tab-' + id).classList.remove('hidden');
             document.querySelectorAll('nav button').forEach(b => {
                 b.classList.remove('bg-[#014c22]', 'text-white');
                 b.classList.add('text-slate-500');
             });
             document.getElementById('btn-' + id).classList.add('bg-[#014c22]', 'text-white');
-            if(id === 'out') updateOutSelect();
-            if(id === 'inv') updateInventory();
+            if(id === 'cat') updateCatList();
+            if(id === 'in' || id === 'out') populateSelects();
+            if(id === 'rep') updateReport();
         }
 
-        function addStockIn() {
-            const name = document.getElementById('inName').value.trim();
+        function addCategory() {
+            const name = document.getElementById('newCatName').value.trim();
+            if(!name || db.cats.includes(name)) return;
+            db.cats.push(name);
+            save();
+            document.getElementById('newCatName').value = '';
+            updateCatList();
+        }
+
+        function updateCatList() {
+            document.getElementById('catList').innerHTML = db.cats.map(c => `<span class="bg-slate-100 px-3 py-1 rounded-full border text-slate-600">${c}</span>`).join('');
+        }
+
+        function populateSelects() {
+            document.getElementById('inCat').innerHTML = db.cats.map(c => `<option value="${c}">${c}</option>`).join('');
+            const items = [...new Set(db.in.map(i => i.name))];
+            document.getElementById('outItem').innerHTML = items.map(i => `<option value="${i}">${i}</option>`).join('');
+        }
+
+        function saveIn() {
+            const name = document.getElementById('inName').value;
+            const cat = document.getElementById('inCat').value;
             const price = parseFloat(document.getElementById('inPrice').value);
             const qty = parseFloat(document.getElementById('inQty').value);
-            if(!name || isNaN(price) || isNaN(qty)) return alert("সঠিক তথ্য দিন");
-            db.in.push({ name, price, qty, date: new Date().toLocaleDateString() });
-            saveDB();
-            alert("সেভ হয়েছে");
+            if(!name || isNaN(price)) return alert("সঠিক তথ্য দিন");
+            db.in.push({ name, cat, price, qty, date: new Date().toLocaleDateString() });
+            save(); alert("স্টোরে যোগ করা হয়েছে");
             document.getElementById('inName').value = '';
         }
 
-        function updateOutSelect() {
-            const select = document.getElementById('outName');
-            const items = [...new Set(db.in.map(i => i.name))];
-            select.innerHTML = items.map(i => `<option value="${i}">${i}</option>`).join('');
-        }
-
-        function addStockOut() {
-            const name = document.getElementById('outName').value;
+        function saveOut() {
+            const section = document.getElementById('outSection').value;
+            const name = document.getElementById('outItem').value;
             const qty = parseFloat(document.getElementById('outQty').value);
-            if(!name || isNaN(qty)) return alert("পরিমাণ দিন");
-            db.out.push({ name, qty, date: new Date().toLocaleDateString() });
-            saveDB();
-            alert("ইস্যু সফল");
+            if(!section || !name || isNaN(qty)) return alert("সব ঘর পূরণ করুন");
+            db.out.push({ section, name, qty, date: new Date().toLocaleDateString() });
+            save(); alert("সেকশনে পাঠানো হয়েছে");
         }
 
-        function updateInventory() {
-            const table = document.getElementById('inventoryBody');
-            table.innerHTML = "";
-            let itemNames = [...new Set(db.in.map(i => i.name))];
+        function updateReport() {
+            const body = document.getElementById('repBody'); body.innerHTML = "";
             let grandTotal = 0;
-            itemNames.forEach(name => {
+            let items = [...new Set(db.in.map(i => i.name))];
+            items.forEach(name => {
                 const totalIn = db.in.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
                 const totalOut = db.out.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
-                const lastPrice = db.in.filter(i => i.name === name).pop().price;
-                const balance = totalIn - totalOut;
-                const val = balance * lastPrice;
-                grandTotal += val;
-                table.innerHTML += `<tr><td class="p-4 font-bold">${name}</td><td class="p-4">${balance}</td><td class="p-4 font-bold text-[#014c22]">৳${val.toLocaleString()}</td></tr>`;
+                const info = db.in.filter(i => i.name === name).pop();
+                const bal = totalIn - totalOut;
+                const totalVal = bal * info.price;
+                grandTotal += totalVal;
+                body.innerHTML += `<tr class="${bal <= 5 ? 'bg-red-50' : ''}"><td class="p-3 font-bold">${name}</td><td class="p-3 text-center text-slate-500">${info.cat}</td><td class="p-3 text-center font-bold ${bal <= 5 ? 'text-red-600' : ''}">${bal}</td><td class="p-3 text-right font-black">৳${totalVal.toLocaleString()}</td></tr>`;
             });
             document.getElementById('totalValue').innerText = "৳" + grandTotal.toLocaleString();
         }
 
-        function saveDB() { localStorage.setItem('bfidc_pro_v2', JSON.stringify(db)); }
+        function save() { localStorage.setItem('bfidc_furniture_v1', JSON.stringify(db)); }
 
         function downloadBackup() {
-            let csv = "Item Name,Stock In,Stock Out,Price,Balance,Total Value\n";
-            let itemNames = [...new Set(db.in.map(i => i.name))];
-            itemNames.forEach(name => {
-                const totalIn = db.in.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
-                const totalOut = db.out.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
-                const lastPrice = db.in.filter(i => i.name === name).pop().price;
-                const balance = totalIn - totalOut;
-                csv += `${name},${totalIn},${totalOut},${lastPrice},${balance},${balance * lastPrice}\n`;
-            });
+            let csv = "Item,Category,Section/Purchase,Qty,Date\n";
+            db.in.forEach(i => csv += `${i.name},${i.cat},PURCHASE,${i.qty},${i.date}\n`);
+            db.out.forEach(o => csv += `${o.name},-,${o.section},${o.qty},${o.date}\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `BFIDC_Backup_${new Date().toLocaleDateString()}.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const a = document.createElement('a'); a.href = url; a.download = 'BFIDC_Stock_Report.csv'; a.click();
         }
+
+        function clearAll() { if(confirm("সব ডাটা মুছে যাবে! আপনি কি নিশ্চিত?")) { localStorage.clear(); location.reload(); } }
+        
+        showTab('in');
     </script>
 </body>
 </html>
