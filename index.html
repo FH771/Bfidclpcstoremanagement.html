@@ -3,227 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFIDC Pro Inventory System</title>
+    <title>BFIDC | Enterprise Resource App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Inter:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Hind+Siliguri:wght@400;600;700&display=swap');
         
-        :root { --primary: #014c22; --accent: #facc15; }
-        body { font-family: 'Hind Siliguri', 'Inter', sans-serif; background-color: #f3f4f6; }
+        :root { --primary: #0f172a; --accent: #10b981; --gold: #fbbf24; }
+        body { font-family: 'Outfit', 'Hind Siliguri', sans-serif; background-color: #f8fafc; color: #1e293b; }
         
-        .glass-header { background: linear-gradient(135deg, var(--primary) 0%, #065f46 100%); }
-        .tab-active { border-bottom: 4px solid var(--accent); color: var(--accent) !important; }
+        .header-gradient { background: linear-gradient(135deg, #014c22 0%, #064e3b 100%); }
+        .nav-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
+        .active-tab { background: #014c22 !important; color: white !important; transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(1, 76, 34, 0.3); }
         
-        /* Background Shadow Logo */
+        /* Shadow Logo Background */
         body::before {
             content: ""; position: fixed; top: 55%; left: 50%; transform: translate(-50%, -50%);
-            width: 320px; height: 320px; background-image: url('logo.jpg');
-            background-size: contain; background-repeat: no-repeat; opacity: 0.07; z-index: -1;
+            width: 350px; height: 350px; background-image: url('logo.jpg');
+            background-size: contain; background-repeat: no-repeat; opacity: 0.05; z-index: -1; pointer-events: none;
         }
 
-        .card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
-        input, select { border: 1.5px solid #e2e8f0; transition: all 0.3s; }
-        input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(1, 76, 34, 0.1); }
+        .neo-card { background: white; border-radius: 28px; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: 0.3s; }
+        .neo-card:hover { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05); }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-28">
 
-    <header class="glass-header text-white pt-10 pb-20 px-6 rounded-b-[50px] shadow-2xl relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
-        <div class="relative z-10 flex flex-col items-center">
-            <div class="bg-white p-1 rounded-3xl mb-4 shadow-2xl border-2 border-yellow-400 w-24 h-24 flex items-center justify-center">
+    <header class="header-gradient text-white pt-12 pb-24 px-8 rounded-b-[60px] shadow-2xl relative">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tighter">RESOURCE <span class="text-gold">PRO</span></h1>
+                <p class="text-white/60 text-xs font-semibold uppercase tracking-widest mt-1">BFIDC Furniture Unit</p>
+            </div>
+            <div class="w-16 h-16 bg-white rounded-2xl p-1 shadow-2xl border-2 border-gold/50 overflow-hidden">
                 <img src="logo.jpg" alt="Logo" class="w-full h-full object-contain">
             </div>
-            <h1 class="text-2xl font-black tracking-tight uppercase">BFIDC FURNITURE UNIT</h1>
-            <div class="bg-yellow-400 text-[#014c22] px-4 py-1 rounded-full text-[10px] font-bold mt-2 uppercase tracking-[3px]">Enterprise Management</div>
         </div>
     </header>
 
-    <nav class="sticky top-4 z-50 mx-4 -mt-10 bg-[#014c22] text-white/70 rounded-3xl flex p-1 shadow-2xl border border-white/20">
-        <button onclick="showTab('home')" id="btn-home" class="flex-1 py-4 text-[12px] font-bold rounded-2xl tab-active transition-all"><i class="fa-solid fa-house block mb-1 text-lg"></i> হোম</button>
-        <button onclick="showTab('in')" id="btn-in" class="flex-1 py-4 text-[12px] font-bold rounded-2xl transition-all"><i class="fa-solid fa-plus-circle block mb-1 text-lg"></i> এন্ট্রি</button>
-        <button onclick="showTab('out')" id="btn-out" class="flex-1 py-4 text-[12px] font-bold rounded-2xl transition-all"><i class="fa-solid fa-share-from-square block mb-1 text-lg"></i> ইস্যু</button>
-        <button onclick="showTab('rep')" id="btn-rep" class="flex-1 py-4 text-[12px] font-bold rounded-2xl transition-all"><i class="fa-solid fa-chart-pie block mb-1 text-lg"></i> রিপোর্ট</button>
+    <nav class="sticky top-6 z-50 mx-6 -mt-12 nav-card rounded-3xl flex justify-between p-2 shadow-xl border border-white/50">
+        <button onclick="showTab('dash')" id="btn-dash" class="flex-1 py-4 rounded-2xl text-slate-500 font-bold text-xs transition-all active-tab"><i class="fa-solid fa-chart-line block text-lg mb-1"></i> ড্যাশবোর্ড</button>
+        <button onclick="showTab('in')" id="btn-in" class="flex-1 py-4 rounded-2xl text-slate-500 font-bold text-xs transition-all"><i class="fa-solid fa-box-open block text-lg mb-1"></i> এন্ট্রি</button>
+        <button onclick="showTab('out')" id="btn-out" class="flex-1 py-4 rounded-2xl text-slate-500 font-bold text-xs transition-all"><i class="fa-solid fa-dolly block text-lg mb-1"></i> ট্র্যাকিং</button>
+        <button onclick="showTab('inv')" id="btn-inv" class="flex-1 py-4 rounded-2xl text-slate-500 font-bold text-xs transition-all"><i class="fa-solid fa-warehouse block text-lg mb-1"></i> রিপোর্ট</button>
     </nav>
 
-    <main class="p-4 max-w-xl mx-auto space-y-6 mt-4">
-
-        <section id="tab-home" class="tab-content space-y-4">
-            <div class="card p-6 border border-white">
-                <h2 class="text-xl font-bold text-[#014c22] mb-4 flex items-center gap-2"><i class="fa-solid fa-tags"></i> ক্যাটাগরি সেটআপ</h2>
-                <div class="flex gap-2">
-                    <input type="text" id="catInput" placeholder="উদা: কাঠ, ইলেকট্রিক্যাল..." class="flex-1 p-4 rounded-2xl bg-slate-50">
-                    <button onclick="addCat()" class="bg-[#014c22] text-white px-6 rounded-2xl font-bold hover:bg-emerald-800"><i class="fa-solid fa-plus"></i></button>
+    <main class="p-6 space-y-8 max-w-2xl mx-auto">
+        
+        <section id="tab-dash" class="tab-content space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="neo-card p-5 bg-white">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">মোট মজুদ মূল্য</p>
+                    <h2 id="dash-total" class="text-xl font-black text-emerald-700 mt-1">৳০</h2>
                 </div>
-                <div id="catDisplay" class="mt-4 flex flex-wrap gap-2"></div>
+                <div class="neo-card p-5 bg-white">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">আইটেম সংখ্যা</p>
+                    <h2 id="dash-items" class="text-xl font-black text-blue-700 mt-1">০ টি</h2>
+                </div>
+            </div>
+            <div class="neo-card p-6">
+                <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-tags text-gold"></i> আপনার ক্যাটাগরি</h3>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="catInput" placeholder="নতুন ক্যাটাগরি..." class="flex-1 p-3 rounded-xl bg-slate-50 border-none focus:ring-2 ring-emerald-500 text-sm">
+                    <button onclick="addCat()" class="bg-[#014c22] text-white px-5 rounded-xl font-bold">+</button>
+                </div>
+                <div id="catList" class="flex flex-wrap gap-2"></div>
             </div>
         </section>
 
-        <section id="tab-in" class="tab-content hidden card p-6 border border-white">
-            <h2 class="text-xl font-bold text-[#014c22] mb-6 flex items-center gap-2"><i class="fa-solid fa-cart-shopping"></i> নতুন মালামাল এন্ট্রি</h2>
-            <div class="grid gap-5">
-                <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-2">ক্যাটাগরি সিলেক্ট করুন</label>
-                    <select id="inCat" class="w-full p-4 mt-1 rounded-2xl bg-slate-50 font-semibold"></select>
+        <section id="tab-in" class="tab-content hidden neo-card p-8">
+            <h2 class="text-xl font-black text-slate-800 mb-6 uppercase tracking-tighter">মালামাল ক্রয় এন্ট্রি</h2>
+            <div class="space-y-5">
+                <div class="grid gap-1">
+                    <span class="text-[10px] font-bold text-slate-400 ml-1">ক্যাটাগরি</span>
+                    <select id="inCat" class="w-full p-4 rounded-2xl bg-slate-50 font-semibold border-none"></select>
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-2">পণ্যের বিবরণ</label>
-                    <input type="text" id="inName" placeholder="উদা: সেগুন কাঠ ১'x১'" class="w-full p-4 mt-1 rounded-2xl bg-slate-50">
+                <div class="grid gap-1">
+                    <span class="text-[10px] font-bold text-slate-400 ml-1">পণ্যের নাম (ডিটেইলস)</span>
+                    <input type="text" id="inName" placeholder="উদা: হাতিল স্পেশাল সেগুন কাঠ" class="w-full p-4 rounded-2xl bg-slate-50 border-none font-semibold">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs font-bold text-slate-400 uppercase ml-2">একক দর (৳)</label>
-                        <input type="number" id="inPrice" placeholder="0.00" class="w-full p-4 mt-1 rounded-2xl bg-slate-50">
+                    <div class="grid gap-1">
+                        <span class="text-[10px] font-bold text-slate-400 ml-1">দর (৳)</span>
+                        <input type="number" id="inPrice" placeholder="0.00" class="w-full p-4 rounded-2xl bg-slate-50 border-none">
                     </div>
-                    <div>
-                        <label class="text-xs font-bold text-slate-400 uppercase ml-2">পরিমাণ</label>
-                        <input type="number" id="inQty" placeholder="0" class="w-full p-4 mt-1 rounded-2xl bg-slate-50">
+                    <div class="grid gap-1">
+                        <span class="text-[10px] font-bold text-slate-400 ml-1">পরিমাণ</span>
+                        <input type="number" id="inQty" placeholder="0" class="w-full p-4 rounded-2xl bg-slate-50 border-none">
                     </div>
                 </div>
-                <button onclick="saveIn()" class="w-full bg-[#014c22] text-white py-5 rounded-2xl font-black shadow-lg shadow-emerald-900/20 active:scale-95 transition-all">কনফার্ম এন্ট্রি</button>
+                <button onclick="saveIn()" class="w-full bg-[#014c22] text-white py-5 rounded-2xl font-black shadow-xl shadow-emerald-900/20 active:scale-95 transition-all">কনফার্ম ও সেভ</button>
             </div>
         </section>
 
-        <section id="tab-out" class="tab-content hidden card p-6 border border-white">
-            <h2 class="text-xl font-bold text-red-700 mb-6 flex items-center gap-2"><i class="fa-solid fa-dolly"></i> সেকশনে মালামাল প্রদান</h2>
-            <div class="grid gap-5">
-                <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-2">কোন সেকশনে যাবে?</label>
-                    <select id="outSec" class="w-full p-4 mt-1 rounded-2xl bg-slate-50 font-semibold">
+        <section id="tab-out" class="tab-content hidden neo-card p-8">
+            <h2 class="text-xl font-black text-red-600 mb-6 uppercase tracking-tighter">সেকশনে মালামাল ইস্যু</h2>
+            <div class="space-y-5">
+                <div class="grid gap-1">
+                    <span class="text-[10px] font-bold text-slate-400 ml-1">গন্তব্য সেকশন</span>
+                    <select id="outSec" class="w-full p-4 rounded-2xl bg-slate-50 font-semibold border-none">
+                        <option>স-মিল সেকশন</option>
                         <option>প্ল্যানার মিল</option>
-                        <option>স-মিল</option>
-                        <option>ওয়ার্কশপ</option>
-                        <option>ফার্নিচার ইউনিট</option>
-                        <option>অফিস/অন্যান্য</option>
+                        <option>ওয়ার্কশপ (মেশিন)</option>
+                        <option>ফার্নিচার এসেম্বলি</option>
+                        <option>পলিশ ও ফিনিশিং</option>
                     </select>
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-2">পণ্য সিলেক্ট করুন</label>
-                    <select id="outItem" class="w-full p-4 mt-1 rounded-2xl bg-slate-50 font-semibold"></select>
+                <div class="grid gap-1">
+                    <span class="text-[10px] font-bold text-slate-400 ml-1">পণ্য সিলেক্ট</span>
+                    <select id="outItem" class="w-full p-4 rounded-2xl bg-slate-50 font-semibold border-none"></select>
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase ml-2">ইস্যু পরিমাণ</label>
-                    <input type="number" id="outQty" placeholder="0" class="w-full p-4 mt-1 rounded-2xl bg-slate-50">
+                <div class="grid gap-1">
+                    <span class="text-[10px] font-bold text-slate-400 ml-1">ইস্যু পরিমাণ</span>
+                    <input type="number" id="outQty" placeholder="0" class="w-full p-4 rounded-2xl bg-slate-50 border-none">
                 </div>
-                <button onclick="saveOut()" class="w-full bg-red-600 text-white py-5 rounded-2xl font-black shadow-lg shadow-red-900/20 active:scale-95 transition-all">ইস্যু কনফার্ম করুন</button>
-            </div>
-        </section>
-
-        <section id="tab-rep" class="tab-content hidden space-y-4">
-            <div class="card overflow-hidden border border-white">
-                <div class="bg-[#014c22] p-6 text-white flex justify-between items-center">
-                    <div>
-                        <p class="text-xs text-white/60 font-bold uppercase tracking-widest">মোট স্টকের মূল্য</p>
-                        <h3 id="totalValue" class="text-2xl font-black text-yellow-400">৳০</h3>
-                    </div>
-                    <i class="fa-solid fa-vault text-3xl opacity-30"></i>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-tighter">
-                            <tr><th class="p-4 text-left">নাম ও ক্যাটাগরি</th><th class="p-4 text-center">মজুদ</th><th class="p-4 text-right">মূল্য (৳)</th></tr>
-                        </thead>
-                        <tbody id="repTable" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="downloadCSV()" class="p-4 bg-blue-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-file-excel"></i> Excel</button>
-                <button onclick="resetAll()" class="p-4 bg-white text-red-500 border border-red-100 rounded-2xl font-bold"><i class="fa-solid fa-trash"></i> রিসেট</button>
-            </div>
-        </section>
-    </main>
-
-    <script>
-        let db = JSON.parse(localStorage.getItem('bfidc_pro_v5')) || { cats: ["কাঠ", "ওয়ার্কশপ"], in: [], out: [] };
-
-        function showTab(id) {
-            document.querySelectorAll('.tab-content').forEach(s => s.classList.add('hidden'));
-            document.getElementById('tab-' + id).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => {
-                b.classList.remove('tab-active', 'text-white');
-                b.classList.add('text-white/70');
-            });
-            document.getElementById('btn-' + id).classList.add('tab-active', 'text-white');
-            if(id === 'home') renderCats();
-            if(id === 'in' || id === 'out') populateSelects();
-            if(id === 'rep') renderReport();
-        }
-
-        function addCat() {
-            const val = document.getElementById('catInput').value.trim();
-            if(val && !db.cats.includes(val)) { db.cats.push(val); save(); renderCats(); document.getElementById('catInput').value=''; }
-        }
-
-        function renderCats() {
-            document.getElementById('catDisplay').innerHTML = db.cats.map(c => `<div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl border border-emerald-100 font-bold text-sm flex items-center gap-2">${c} <i class="fa-solid fa-circle-check text-[10px]"></i></div>`).join('');
-        }
-
-        function populateSelects() {
-            document.getElementById('inCat').innerHTML = db.cats.map(c => `<option>${c}</option>`).join('');
-            const items = [...new Set(db.in.map(i => i.name))];
-            document.getElementById('outItem').innerHTML = items.length ? items.map(i => `<option>${i}</option>`).join('') : '<option>কোনো মাল নেই</option>';
-        }
-
-        function saveIn() {
-            const name = document.getElementById('inName').value;
-            const cat = document.getElementById('inCat').value;
-            const price = parseFloat(document.getElementById('inPrice').value);
-            const qty = parseFloat(document.getElementById('inQty').value);
-            if(!name || isNaN(price) || isNaN(qty)) return alert("সঠিকভাবে পূরণ করুন");
-            db.in.push({ name, cat, price, qty, date: new Date().toLocaleDateString() });
-            save(); alert("সফলভাবে জমা হয়েছে");
-            document.getElementById('inName').value = '';
-        }
-
-        function saveOut() {
-            const sec = document.getElementById('outSec').value;
-            const name = document.getElementById('outItem').value;
-            const qty = parseFloat(document.getElementById('outQty').value);
-            if(!name || isNaN(qty)) return alert("তথ্য সঠিক নয়");
-            db.out.push({ sec, name, qty, date: new Date().toLocaleDateString() });
-            save(); alert("ইস্যু সম্পন্ন হয়েছে");
-        }
-
-        function renderReport() {
-            const body = document.getElementById('repTable'); body.innerHTML = "";
-            let grand = 0;
-            let items = [...new Set(db.in.map(i => i.name))];
-            items.forEach(name => {
-                const tIn = db.in.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
-                const tOut = db.out.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
-                const info = db.in.filter(i => i.name === name).pop();
-                const bal = tIn - tOut;
-                const total = bal * info.price;
-                grand += total;
-                body.innerHTML += `<tr>
-                    <td class="p-4"><p class="font-bold text-slate-800">${name}</p><p class="text-[10px] text-slate-400 font-bold uppercase">${info.cat}</p></td>
-                    <td class="p-4 text-center"><span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg font-black">${bal}</span></td>
-                    <td class="p-4 text-right font-black text-[#014c22]">৳${total.toLocaleString()}</td>
-                </tr>`;
-            });
-            document.getElementById('totalValue').innerText = "৳" + grand.toLocaleString();
-        }
-
-        function downloadCSV() {
-            let csv = "Item,Category,Balance,Price,Total\n";
-            let items = [...new Set(db.in.map(i => i.name))];
-            items.forEach(name => {
-                const tIn = db.in.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
-                const tOut = db.out.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
-                const info = db.in.filter(i => i.name === name).pop();
-                const bal = tIn - tOut;
-                csv += `${name},${info.cat},${bal},${info.price},${bal * info.price}\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const a = document.createElement('a'); a.href = window.URL.createObjectURL(blob); a.download = 'BFIDC_Stock.csv'; a.click();
-        }
-
-        function save() { localStorage.setItem('bfidc_pro_v5', JSON.stringify(db)); }
-        function resetAll() { if(confirm("সব ডাটা মুছে যাবে!")) { localStorage.clear(); location.reload(); } }
-        
-        showTab('home');
-    </script>
-</body>
-</html>
+                <button onclick="saveOut()" class="w-full bg-red-600 text-white py-5 rounded-2xl font-black shadow-xl shadow-red-900/20 active:scale
