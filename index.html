@@ -72,3 +72,90 @@
                         </thead>
                         <tbody id="invTable" class="divide-y divide-white/5"></tbody>
                     </table>
+                </div>
+            </section>
+        </main>
+
+        <nav class="fixed bottom-6 left-6 right-6 flex glass p-2 justify-between">
+            <button onclick="showTab('dash')" id="btn-dash" class="flex-1 py-3 rounded-xl active-nav"><i class="fa-solid fa-plus-square"></i></button>
+            <button onclick="showTab('in')" id="btn-in" class="flex-1 py-3 rounded-xl"><i class="fa-solid fa-box"></i></button>
+            <button onclick="showTab('out')" id="btn-out" class="flex-1 py-3 rounded-xl"><i class="fa-solid fa-truck-loading"></i></button>
+            <button onclick="showTab('inv')" id="btn-inv" class="flex-1 py-3 rounded-xl"><i class="fa-solid fa-chart-line"></i></button>
+        </nav>
+    </div>
+
+    <script>
+        const AUTH = "1234";
+        let db = JSON.parse(localStorage.getItem('bfidclpc_v2')) || { cats: ["BEARING", "TIMBER", "ELECTRICAL"], items: [] };
+
+        window.onload = () => { if(sessionStorage.getItem('locked') === 'no') unlockApp(); };
+        function checkPass() { if(document.getElementById('passInput').value === AUTH) { sessionStorage.setItem('locked', 'no'); unlockApp(); } }
+        function unlockApp() { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('appBody').classList.remove('hidden'); renderDash(); }
+        function manualLock() { sessionStorage.removeItem('locked'); location.reload(); }
+
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById('tab-' + id).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav'));
+            document.getElementById('btn-' + id).classList.add('active-nav');
+            if(id === 'dash') renderDash();
+            if(id === 'in' || id === 'out') syncData();
+            if(id === 'inv') renderInv();
+        }
+
+        function addCat() {
+            const v = document.getElementById('catInput').value.toUpperCase().trim();
+            if(v && !db.cats.includes(v)) { db.cats.push(v); save(); renderDash(); document.getElementById('catInput').value=''; }
+        }
+
+        function renderDash() {
+            document.getElementById('catList').innerHTML = db.cats.map(c => `<span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-lg text-[10px] font-bold border border-emerald-500/20">${c}</span>`).join('');
+        }
+
+        function syncData() {
+            document.getElementById('inCat').innerHTML = db.cats.map(c => `<option>${c}</option>`).join('');
+            document.getElementById('outItem').innerHTML = db.items.map(i => `<option value="${i.model}">${i.cat} - ${i.model} (Avail: ${i.qty})</option>`).join('');
+        }
+
+        function saveIn() {
+            const cat = document.getElementById('inCat').value;
+            const model = document.getElementById('inModel').value.toUpperCase().trim();
+            const price = parseFloat(document.getElementById('inPrice').value) || 0;
+            const qty = parseFloat(document.getElementById('inQty').value) || 0;
+            if(!model) return alert("Enter Model Name");
+            
+            let existing = db.items.find(i => i.model === model && i.cat === cat);
+            if(existing) {
+                existing.qty += qty;
+                existing.price = price; 
+            } else {
+                db.items.push({ cat, model, price, qty });
+            }
+            save(); alert("Inventory Updated"); document.getElementById('inModel').value='';
+        }
+
+        function saveOut() {
+            const model = document.getElementById('outItem').value;
+            const qty = parseFloat(document.getElementById('outQty').value) || 0;
+            const item = db.items.find(i => i.model === model);
+            if(item && item.qty >= qty) {
+                item.qty -= qty;
+                save(); alert("Issued Successfully");
+            } else { alert("Insufficient Stock!"); }
+        }
+
+        function renderInv() {
+            const body = document.getElementById('invTable');
+            body.innerHTML = db.items.map(i => `
+                <tr class="border-b border-white/5">
+                    <td class="p-4"><p class="font-bold">${i.model}</p><p class="opacity-40 text-[9px]">${i.cat}</p></td>
+                    <td class="p-4 text-center"><span class="bg-white/5 px-2 py-1 rounded">${i.qty}</span></td>
+                    <td class="p-4 text-right text-emerald-400 font-bold">৳${(i.qty * i.price).toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function save() { localStorage.setItem('bfidclpc_v2', JSON.stringify(db)); }
+    </script>
+</body>
+</html>
