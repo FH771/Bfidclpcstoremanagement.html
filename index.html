@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFIDCLPC Store Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #f0f7f4 0%, #fdf5f5 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px; height: 250px;
+            background-image: url('https://i.ibb.co/VWVX57D/BFIDC-Logo.jpg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.05; 
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="pb-24">
+    <header class="bg-[#014c22] text-white pt-10 pb-16 text-center shadow-lg rounded-b-[40px]">
+        <div class="flex flex-col items-center">
+            <div class="bg-white p-1 rounded-2xl mb-3 w-20 h-20 flex items-center justify-center border-2 border-yellow-400 shadow-xl">
+                <img src="https://i.ibb.co/VWVX57D/BFIDC-Logo.jpg" alt="Logo" class="w-full h-full object-contain">
+            </div>
+            <h1 class="text-2xl font-black">BFIDCLPC STORE</h1>
+            <p class="text-yellow-400 text-[8px] font-bold tracking-[4px] uppercase">Inventory Management</p>
+        </div>
+    </header>
+
+    <nav class="sticky top-4 z-50 mx-6 -mt-8 bg-white/90 backdrop-blur rounded-2xl flex p-1 shadow-lg border border-white">
+        <button onclick="showTab('in')" id="btn-in" class="flex-1 py-3 text-[10px] font-bold rounded-xl bg-[#014c22] text-white">ইনকামিং</button>
+        <button onclick="showTab('out')" id="btn-out" class="flex-1 py-3 text-[10px] font-bold rounded-xl text-slate-500">আউটগোয়িং</button>
+        <button onclick="showTab('inv')" id="btn-inv" class="flex-1 py-3 text-[10px] font-bold rounded-xl text-slate-500">রিপোর্ট</button>
+    </nav>
+
+    <main class="p-5 max-w-lg mx-auto space-y-6">
+        <section id="stock-in" class="tab-content active bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <h2 class="text-[#014c22] font-bold mb-4">মালামাল এন্ট্রি</h2>
+            <div class="space-y-4">
+                <input type="text" id="inName" placeholder="মালামালের নাম" class="w-full p-4 bg-slate-50 rounded-xl outline-none border focus:border-[#014c22]">
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="number" id="inPrice" placeholder="দর (৳)" class="w-full p-4 bg-slate-50 rounded-xl border">
+                    <input type="number" id="inQty" placeholder="পরিমাণ" class="w-full p-4 bg-slate-50 rounded-xl border">
+                </div>
+                <button onclick="addStockIn()" class="w-full bg-[#014c22] text-white py-4 rounded-xl font-bold shadow-lg">সেভ করুন</button>
+            </div>
+        </section>
+
+        <section id="stock-out" class="tab-content hidden bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+            <h2 class="text-red-700 font-bold mb-4">মালামাল ইস্যু</h2>
+            <div class="space-y-4">
+                <select id="outName" class="w-full p-4 bg-slate-50 rounded-xl border font-bold"></select>
+                <input type="number" id="outQty" placeholder="পরিমাণ" class="w-full p-4 bg-slate-50 rounded-xl border">
+                <button onclick="addStockOut()" class="w-full bg-red-700 text-white py-4 rounded-xl font-bold">ইস্যু কনফার্ম</button>
+            </div>
+        </section>
+
+        <section id="inventory" class="tab-content hidden bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="bg-[#014c22] p-5 text-white flex justify-between items-center">
+                <span class="font-bold">মজুদ খতিয়ান</span>
+                <span id="totalValue" class="font-black text-yellow-400"></span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50">
+                        <tr><th class="p-3 text-left">বিবরণ</th><th class="p-3 text-center">মজুদ</th><th class="p-3 text-right">মূল্য</th></tr>
+                    </thead>
+                    <tbody id="inventoryBody" class="divide-y"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let db = JSON.parse(localStorage.getItem('bfidc_v10')) || { in: [], out: [] };
+
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(s => s.classList.add('hidden'));
+            document.getElementById('stock-' + id).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => {
+                b.classList.remove('bg-[#014c22]', 'text-white');
+                b.classList.add('text-slate-500');
+            });
+            event.target.classList.add('bg-[#014c22]', 'text-white');
+            if(id === 'out') updateOutSelect();
+            if(id === 'inv') updateInventory();
+        }
+
+        function addStockIn() {
+            const name = document.getElementById('inName').value;
+            const price = parseFloat(document.getElementById('inPrice').value);
+            const qty = parseFloat(document.getElementById('inQty').value);
+            if(!name || isNaN(qty)) return alert("সঠিক তথ্য দিন");
+            db.in.push({name, price, qty});
+            localStorage.setItem('bfidc_v10', JSON.stringify(db));
+            alert("সফলভাবে সেভ হয়েছে");
+            document.getElementById('inName').value = '';
+        }
+
+        function updateOutSelect() {
+            const select = document.getElementById('outName');
+            const items = [...new Set(db.in.map(i => i.name))];
+            select.innerHTML = items.map(i => `<option value="${i}">${i}</option>`).join('');
+        }
+
+        function addStockOut() {
+            const name = document.getElementById('outName').value;
+            const qty = parseFloat(document.getElementById('outQty').value);
+            if(!qty) return alert("পরিমাণ দিন");
+            db.out.push({name, qty});
+            localStorage.setItem('bfidc_v10', JSON.stringify(db));
+            alert("ইস্যু সফল");
+        }
+
+        function updateInventory() {
+            const table = document.getElementById('inventoryBody');
+            table.innerHTML = "";
+            let itemNames = [...new Set(db.in.map(i => i.name))];
+            let grandTotal = 0;
+            itemNames.forEach(name => {
+                const tin = db.in.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
+                const tout = db.out.filter(i => i.name === name).reduce((s, i) => s + i.qty, 0);
+                const price = db.in.find(i => i.name === name).price;
+                const bal = tin - tout;
+                grandTotal += (bal * price);
+                table.innerHTML += `<tr><td class="p-3 font-bold">${name}</td><td class="p-3 text-center">${bal}</td><td class="p-3 text-right">৳${(bal*price).toLocaleString()}</td></tr>`;
+            });
+            document.getElementById('totalValue').innerText = "৳" + grandTotal.toLocaleString();
+        }
+    </script>
+</body>
+</html>
