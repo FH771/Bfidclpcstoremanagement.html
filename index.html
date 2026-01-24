@@ -7,155 +7,36 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Hind+Siliguri:wght@400;600;700&display=swap');
-        :root { --primary: #022c22; --accent: #10b981; }
-        body { font-family: 'Inter', 'Hind Siliguri', sans-serif; background: #0f172a; color: #f8fafc; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Hind+Siliguri:wght@400;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif; background: #0f172a; color: #f8fafc; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; }
-        .active-nav { background: var(--accent) !important; color: #022c22 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
-        .login-overlay { position: fixed; inset: 0; background: #022c22; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .active-nav { background: #10b981 !important; color: #022c22 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
         input, select { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; outline: none; }
+        .folder-card { transition: all 0.3s ease; }
+        .folder-card:hover { transform: translateY(-5px); background: rgba(16, 185, 129, 0.1); }
     </style>
 </head>
 <body class="pb-32">
-    <div id="loginScreen" class="login-overlay">
+    <div id="loginScreen" class="fixed inset-0 bg-[#022c22] z-[9999] flex items-center justify-center">
         <div class="glass p-10 w-full max-w-sm text-center">
-            <h2 class="text-3xl font-extrabold mb-6 uppercase tracking-widest">BFIDCLPC</h2>
-            <input type="password" id="passInput" placeholder="••••" class="w-full p-4 rounded-xl text-center text-2xl mb-4">
-            <button onclick="checkPass()" class="w-full bg-emerald-500 text-black py-4 rounded-xl font-bold uppercase">Unlock ERP</button>
+            <h2 class="text-3xl font-black mb-6 uppercase tracking-widest text-white">BFIDCLPC</h2>
+            <input type="password" id="passInput" placeholder="••••" class="w-full p-4 rounded-xl text-center text-2xl mb-4 tracking-[10px]">
+            <button onclick="checkPass()" class="w-full bg-emerald-500 text-black py-4 rounded-xl font-bold uppercase tracking-widest">Unlock System</button>
         </div>
     </div>
 
     <div id="appBody" class="hidden">
         <header class="p-8 flex justify-between items-center">
-            <h1 class="text-2xl font-black tracking-tighter text-emerald-500">BFIDCLPC <span class="text-white">STORE</span></h1>
+            <div>
+                <h1 class="text-2xl font-black text-emerald-500">BFIDCLPC <span class="text-white">ERP</span></h1>
+                <p class="text-[10px] uppercase tracking-widest text-white/40">Smart Store Management</p>
+            </div>
             <button onclick="manualLock()" class="glass w-10 h-10 flex items-center justify-center text-red-400"><i class="fa-solid fa-power-off"></i></button>
         </header>
 
         <main class="px-6 space-y-6 max-w-3xl mx-auto">
-            <section id="tab-dash" class="tab-content glass p-6 space-y-4">
-                <h3 class="font-bold text-emerald-500 uppercase text-xs tracking-widest">Master Categories</h3>
-                <div class="flex gap-2">
-                    <input type="text" id="catInput" placeholder="New Category (e.g., Bearing, Wood)" class="flex-1 p-3 rounded-xl text-sm">
-                    <button onclick="addCat()" class="bg-emerald-500 text-black px-4 rounded-xl font-black">+</button>
-                </div>
-                <div id="catList" class="flex flex-wrap gap-2"></div>
-            </section>
-
-            <section id="tab-in" class="tab-content hidden glass p-6 space-y-4">
-                <h3 class="font-bold text-emerald-500 uppercase text-xs tracking-widest">Add New Model / Stock</h3>
-                <div class="grid gap-4">
-                    <select id="inCat" class="w-full p-4 rounded-xl text-sm font-bold"></select>
-                    <input type="text" id="inModel" placeholder="Specific Model/Size (e.g., 6202 RS, 4ft x 2ft)" class="w-full p-4 rounded-xl font-bold">
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="inPrice" placeholder="Unit Price" class="p-4 rounded-xl">
-                        <input type="number" id="inQty" placeholder="Quantity" class="p-4 rounded-xl">
-                    </div>
-                    <button onclick="saveIn()" class="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase">Commit to Inventory</button>
-                </div>
-            </section>
-
-            <section id="tab-out" class="tab-content hidden glass p-6 space-y-4">
-                <h3 class="font-bold text-red-400 uppercase text-xs tracking-widest">Issue Resource</h3>
-                <select id="outItem" class="w-full p-4 rounded-xl text-sm font-bold"></select>
-                <input type="number" id="outQty" placeholder="Issue Quantity" class="w-full p-4 rounded-xl">
-                <select id="outSec" class="w-full p-4 rounded-xl text-sm">
-                    <option>SAW MILL</option><option>PLANER MILL</option><option>WORKSHOP</option><option>OFFICE</option>
-                </select>
-                <button onclick="saveOut()" class="w-full bg-red-500 text-white py-4 rounded-xl font-black uppercase">Confirm Issue</button>
-            </section>
-
-            <section id="tab-inv" class="tab-content hidden space-y-4">
-                <div class="glass overflow-hidden">
-                    <table class="w-full text-[11px]">
-                        <thead class="bg-white/5 text-white/40 uppercase">
-                            <tr><th class="p-4 text-left">Category & Model</th><th class="p-4 text-center">Stock</th><th class="p-4 text-right">Value</th></tr>
-                        </thead>
-                        <tbody id="invTable" class="divide-y divide-white/5"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-
-        <nav class="fixed bottom-6 left-6 right-6 flex glass p-2 justify-between">
-            <button onclick="showTab('dash')" id="btn-dash" class="flex-1 py-3 rounded-xl active-nav"><i class="fa-solid fa-plus-square"></i></button>
-            <button onclick="showTab('in')" id="btn-in" class="flex-1 py-3 rounded-xl"><i class="fa-solid fa-box"></i></button>
-            <button onclick="showTab('out')" id="btn-out" class="flex-1 py-3 rounded-xl"><i class="fa-solid fa-truck-loading"></i></button>
-            <button onclick="showTab('inv')" id="btn-inv" class="flex-1 py-3 rounded-xl"><i class="fa-solid fa-chart-line"></i></button>
-        </nav>
-    </div>
-
-    <script>
-        const AUTH = "1234";
-        let db = JSON.parse(localStorage.getItem('bfidclpc_v2')) || { cats: ["BEARING", "TIMBER", "ELECTRICAL"], items: [] };
-
-        window.onload = () => { if(sessionStorage.getItem('locked') === 'no') unlockApp(); };
-        function checkPass() { if(document.getElementById('passInput').value === AUTH) { sessionStorage.setItem('locked', 'no'); unlockApp(); } }
-        function unlockApp() { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('appBody').classList.remove('hidden'); renderDash(); }
-        function manualLock() { sessionStorage.removeItem('locked'); location.reload(); }
-
-        function showTab(id) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById('tab-' + id).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav'));
-            document.getElementById('btn-' + id).classList.add('active-nav');
-            if(id === 'dash') renderDash();
-            if(id === 'in' || id === 'out') syncData();
-            if(id === 'inv') renderInv();
-        }
-
-        function addCat() {
-            const v = document.getElementById('catInput').value.toUpperCase().trim();
-            if(v && !db.cats.includes(v)) { db.cats.push(v); save(); renderDash(); document.getElementById('catInput').value=''; }
-        }
-
-        function renderDash() {
-            document.getElementById('catList').innerHTML = db.cats.map(c => `<span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-lg text-[10px] font-bold border border-emerald-500/20">${c}</span>`).join('');
-        }
-
-        function syncData() {
-            document.getElementById('inCat').innerHTML = db.cats.map(c => `<option>${c}</option>`).join('');
-            document.getElementById('outItem').innerHTML = db.items.map(i => `<option value="${i.model}">${i.cat} - ${i.model} (Avail: ${i.qty})</option>`).join('');
-        }
-
-        function saveIn() {
-            const cat = document.getElementById('inCat').value;
-            const model = document.getElementById('inModel').value.toUpperCase().trim();
-            const price = parseFloat(document.getElementById('inPrice').value) || 0;
-            const qty = parseFloat(document.getElementById('inQty').value) || 0;
-            if(!model) return alert("Enter Model Name");
-            
-            let existing = db.items.find(i => i.model === model && i.cat === cat);
-            if(existing) {
-                existing.qty += qty;
-                existing.price = price; 
-            } else {
-                db.items.push({ cat, model, price, qty });
-            }
-            save(); alert("Inventory Updated"); document.getElementById('inModel').value='';
-        }
-
-        function saveOut() {
-            const model = document.getElementById('outItem').value;
-            const qty = parseFloat(document.getElementById('outQty').value) || 0;
-            const item = db.items.find(i => i.model === model);
-            if(item && item.qty >= qty) {
-                item.qty -= qty;
-                save(); alert("Issued Successfully");
-            } else { alert("Insufficient Stock!"); }
-        }
-
-        function renderInv() {
-            const body = document.getElementById('invTable');
-            body.innerHTML = db.items.map(i => `
-                <tr class="border-b border-white/5">
-                    <td class="p-4"><p class="font-bold">${i.model}</p><p class="opacity-40 text-[9px]">${i.cat}</p></td>
-                    <td class="p-4 text-center"><span class="bg-white/5 px-2 py-1 rounded">${i.qty}</span></td>
-                    <td class="p-4 text-right text-emerald-400 font-bold">৳${(i.qty * i.price).toLocaleString()}</td>
-                </tr>
-            `).join('');
-        }
-
-        function save() { localStorage.setItem('bfidclpc_v2', JSON.stringify(db)); }
-    </script>
-</body>
-</html>
+            <section id="tab-folders" class="tab-content space-y-4">
+                <div class="glass p-6">
+                    <h3 class="font-bold text-emerald-500 uppercase text-xs tracking-widest mb-4"><i class="fa-solid fa-folder-plus mr-2"></i>Create New Folder</h3>
+                    <div class="flex gap-2">
+                        <input type="text" id="newFolderInput" placeholder="Folder Name (e.g. Bearing, Oil)" class="flex-1 p-3 rounded-xl
