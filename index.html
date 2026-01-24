@@ -11,32 +11,339 @@
         body { font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif; background: #0f172a; color: #f8fafc; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; }
         .active-nav { background: #10b981 !important; color: #022c22 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
-        input, select { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; outline: none; }
+        input, select, textarea { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; outline: none; }
         .folder-card { transition: all 0.3s ease; }
         .folder-card:hover { transform: translateY(-5px); background: rgba(16, 185, 129, 0.1); }
+        .btn-primary { background: #10b981; color: #022c22; font-weight: 800; }
+        .btn-danger { background: #ef4444; color: white; font-weight: 800; }
+        .text-muted { color: #94a3b8; }
+        .text-accent { color: #10b981; }
     </style>
 </head>
 <body class="pb-32">
     <div id="loginScreen" class="fixed inset-0 bg-[#022c22] z-[9999] flex items-center justify-center">
         <div class="glass p-10 w-full max-w-sm text-center">
             <h2 class="text-3xl font-black mb-6 uppercase tracking-widest text-white">BFIDCLPC</h2>
-            <input type="password" id="passInput" placeholder="••••" class="w-full p-4 rounded-xl text-center text-2xl mb-4 tracking-[10px]">
-            <button onclick="checkPass()" class="w-full bg-emerald-500 text-black py-4 rounded-xl font-bold uppercase tracking-widest">Unlock System</button>
+            <input type="password" id="passInput" placeholder="Enter Password" class="w-full p-4 rounded-xl text-center text-2xl mb-4 tracking-[10px]">
+            <button onclick="checkPass()" class="w-full btn-primary py-4 rounded-xl font-bold uppercase tracking-widest">Unlock System</button>
         </div>
     </div>
 
     <div id="appBody" class="hidden">
         <header class="p-8 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-black text-emerald-500">BFIDCLPC <span class="text-white">ERP</span></h1>
-                <p class="text-[10px] uppercase tracking-widest text-white/40">Smart Store Management</p>
+                <h1 class="text-2xl font-black text-accent">BFIDCLPC <span class="text-white">ERP</span></h1>
+                <p class="text-[10px] uppercase tracking-widest text-muted">Smart Store Management System</p>
             </div>
-            <button onclick="manualLock()" class="glass w-10 h-10 flex items-center justify-center text-red-400"><i class="fa-solid fa-power-off"></i></button>
+            <button onclick="manualLock()" class="glass w-10 h-10 flex items-center justify-center text-red-400 hover:text-red-300 transition-colors"><i class="fa-solid fa-power-off"></i></button>
         </header>
 
-        <main class="px-6 space-y-6 max-w-3xl mx-auto">
+        <main class="px-6 space-y-6 max-w-4xl mx-auto">
             <section id="tab-folders" class="tab-content space-y-4">
                 <div class="glass p-6">
-                    <h3 class="font-bold text-emerald-500 uppercase text-xs tracking-widest mb-4"><i class="fa-solid fa-folder-plus mr-2"></i>Create New Folder</h3>
+                    <h3 class="font-bold text-accent uppercase text-xs tracking-widest mb-4"><i class="fa-solid fa-folder-plus mr-2"></i>Create New Folder</h3>
                     <div class="flex gap-2">
-                        <input type="text" id="newFolderInput" placeholder="Folder Name (e.g. Bearing, Oil)" class="flex-1 p-3 rounded-xl
+                        <input type="text" id="newFolderInput" placeholder="Folder Name (e.g. Bearing, Oil)" class="flex-1 p-3 rounded-xl text-sm">
+                        <button onclick="addFolder()" class="btn-primary px-6 py-3 rounded-xl"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                <div id="folderGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Folders will be rendered here -->
+                </div>
+            </section>
+
+            <section id="tab-in" class="tab-content hidden glass p-6 space-y-4">
+                <h3 class="font-bold text-accent uppercase text-xs tracking-widest"><i class="fa-solid fa-box-open mr-2"></i>Stock Ingestion</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-muted">Select Folder</label>
+                        <select id="folderSelect" class="w-full p-4 rounded-xl font-bold text-sm"></select>
+                    </div>
+                    
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-muted">Model/Item Description</label>
+                        <input type="text" id="itemModel" placeholder="e.g. 6202 RS or 10W-40 Oil" class="w-full p-4 rounded-xl font-bold">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] uppercase font-bold text-muted">Unit Price (৳)</label>
+                            <input type="number" id="itemPrice" placeholder="0.00" step="0.01" class="w-full p-4 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="text-[10px] uppercase font-bold text-muted">Quantity</label>
+                            <input type="number" id="itemQty" placeholder="0" min="1" class="w-full p-4 rounded-xl">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-muted">Supplier (Optional)</label>
+                        <input type="text" id="itemSupplier" placeholder="Supplier Name" class="w-full p-4 rounded-xl">
+                    </div>
+                    
+                    <button onclick="saveStock()" class="w-full btn-primary py-4 rounded-xl font-black uppercase tracking-widest mt-4">Save to Folder</button>
+                </div>
+            </section>
+
+            <section id="tab-out" class="tab-content hidden glass p-6 space-y-4">
+                <h3 class="font-bold text-red-400 uppercase text-xs tracking-widest"><i class="fa-solid fa-truck-ramp-box mr-2"></i>Unit Deployment</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-muted">Select Item</label>
+                        <select id="issueItemSelect" class="w-full p-4 rounded-xl text-sm font-bold"></select>
+                    </div>
+                    
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-muted">Quantity to Issue</label>
+                        <input type="number" id="issueQty" placeholder="How many to issue?" min="1" class="w-full p-4 rounded-xl">
+                    </div>
+                    
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-muted">Deploy to Unit</label>
+                        <select id="issueUnit" class="w-full p-4 rounded-xl text-sm">
+                            <option>SAW MILL UNIT</option>
+                            <option>PLANER MILL</option>
+                            <option>FURNITURE WORKSHOP</option>
+                            <option>FINISHING & POLISH</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-muted">Purpose/Notes (Optional)</label>
+                        <textarea id="issueNotes" placeholder="Additional notes" class="w-full p-4 rounded-xl" rows="2"></textarea>
+                    </div>
+                    
+                    <button onclick="confirmIssue()" class="w-full btn-danger py-4 rounded-xl font-black uppercase">Confirm Deployment</button>
+                </div>
+            </section>
+
+            <section id="tab-ledger" class="tab-content hidden space-y-4">
+                <div class="glass p-6">
+                    <h3 class="font-bold text-accent uppercase text-xs tracking-widest mb-4"><i class="fa-solid fa-list-check mr-2"></i>Inventory Ledger</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-[11px]">
+                            <thead class="bg-white/5 text-muted uppercase tracking-widest">
+                                <tr>
+                                    <th class="p-4 text-left">Folder/Item</th>
+                                    <th class="p-4 text-center">Qty</th>
+                                    <th class="p-4 text-right">Unit Price</th>
+                                    <th class="p-4 text-right">Total Value</th>
+                                    <th class="p-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledgerTable" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-history" class="tab-content hidden space-y-4">
+                <div class="glass p-6">
+                    <h3 class="font-bold text-accent uppercase text-xs tracking-widest mb-4"><i class="fa-solid fa-history mr-2"></i>Transaction History</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-[11px]">
+                            <thead class="bg-white/5 text-muted uppercase tracking-widest">
+                                <tr>
+                                    <th class="p-4 text-left">Date</th>
+                                    <th class="p-4 text-left">Type</th>
+                                    <th class="p-4 text-left">Item</th>
+                                    <th class="p-4 text-center">Qty</th>
+                                    <th class="p-4 text-left">Unit</th>
+                                    <th class="p-4 text-left">Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTable" class="divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <nav class="fixed bottom-6 left-6 right-6 flex glass p-2 justify-between z-[999]">
+            <button onclick="showTab('folders')" id="btn-folders" class="flex-1 py-4 rounded-2xl active-nav transition-all"><i class="fa-solid fa-folder-open"></i></button>
+            <button onclick="showTab('in')" id="btn-in" class="flex-1 py-4 rounded-2xl transition-all"><i class="fa-solid fa-circle-plus"></i></button>
+            <button onclick="showTab('out')" id="btn-out" class="flex-1 py-4 rounded-2xl transition-all"><i class="fa-solid fa-paper-plane"></i></button>
+            <button onclick="showTab('ledger')" id="btn-ledger" class="flex-1 py-4 rounded-2xl transition-all"><i class="fa-solid fa-list-check"></i></button>
+            <button onclick="showTab('history')" id="btn-history" class="flex-1 py-4 rounded-2xl transition-all"><i class="fa-solid fa-history"></i></button>
+        </nav>
+    </div>
+
+    <script>
+        const AUTH = "1234"; // In production, use a more secure method
+        let db = JSON.parse(localStorage.getItem('bfidclpc_pro_v4')) || { 
+            folders: ["BEARING", "TIMBER", "HARDWARE"], 
+            items: [], 
+            transactions: [] 
+        };
+
+        window.onload = () => { 
+            if(sessionStorage.getItem('logged') === 'yes') unlock(); 
+        };
+
+        function checkPass() { 
+            if(document.getElementById('passInput').value === AUTH) { 
+                sessionStorage.setItem('logged', 'yes'); 
+                unlock(); 
+            } else {
+                alert("Incorrect password!");
+            }
+        }
+
+        function unlock() { 
+            document.getElementById('loginScreen').classList.add('hidden'); 
+            document.getElementById('appBody').classList.remove('hidden'); 
+            renderFolders(); 
+        }
+
+        function manualLock() { 
+            sessionStorage.removeItem('logged'); 
+            location.reload(); 
+        }
+
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById('tab-' + id).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav'));
+            document.getElementById('btn-' + id).classList.add('active-nav');
+            if(id === 'folders') renderFolders();
+            if(id === 'in') syncSelects();
+            if(id === 'ledger') renderLedger();
+            if(id === 'out') syncIssueList();
+            if(id === 'history') renderHistory();
+        }
+
+        function addFolder() {
+            const name = document.getElementById('newFolderInput').value.toUpperCase().trim();
+            if(name && !db.folders.includes(name)) {
+                db.folders.push(name);
+                save(); 
+                renderFolders();
+                document.getElementById('newFolderInput').value = '';
+            } else if (db.folders.includes(name)) {
+                alert("Folder already exists!");
+            } else {
+                alert("Please enter a folder name!");
+            }
+        }
+
+        function deleteFolder(name) {
+            if(confirm(`Delete ${name} folder and all its contents? This action cannot be undone.`)) {
+                db.folders = db.folders.filter(f => f !== name);
+                db.items = db.items.filter(i => i.folder !== name);
+                db.transactions = db.transactions.filter(t => t.folder !== name);
+                save(); 
+                renderFolders();
+            }
+        }
+
+        function renderFolders() {
+            const grid = document.getElementById('folderGrid');
+            grid.innerHTML = db.folders.map(f => {
+                const count = db.items.filter(i => i.folder === f).length;
+                const totalValue = db.items.filter(i => i.folder === f).reduce((sum, i) => sum + (i.qty * i.price), 0);
+                return `
+                    <div class="glass folder-card p-5 relative overflow-hidden group">
+                        <div class="flex justify-between items-start mb-2">
+                            <i class="fa-solid fa-folder text-accent text-2xl"></i>
+                            <button onclick="deleteFolder('${f}')" class="text-muted hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><i class="fa-solid fa-times text-[10px]"></i></button>
+                        </div>
+                        <h4 class="font-black text-xs uppercase tracking-tighter">${f}</h4>
+                        <p class="text-[9px] text-muted font-bold uppercase">${count} Items inside</p>
+                        <p class="text-[9px] text-accent font-bold">৳${totalValue.toLocaleString()}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function syncSelects() {
+            document.getElementById('folderSelect').innerHTML = db.folders.map(f => `<option>${f}</option>`).join('');
+        }
+
+        function syncIssueList() {
+            const select = document.getElementById('issueItemSelect');
+            select.innerHTML = db.items.filter(i => i.qty > 0).map(i => `<option value="${i.id}">${i.folder} | ${i.model} (Stock: ${i.qty})</option>`).join('') || '<option disabled>NO STOCK AVAILABLE</option>';
+        }
+
+        function saveStock() {
+            const folder = document.getElementById('folderSelect').value;
+            const model = document.getElementById('itemModel').value.toUpperCase().trim();
+            const price = parseFloat(document.getElementById('itemPrice').value) || 0;
+            const qty = parseFloat(document.getElementById('itemQty').value) || 0;
+            const supplier = document.getElementById('itemSupplier').value.trim();
+
+            if(!model || !folder) {
+                alert("Please fill in all required fields!");
+                return;
+            }
+
+            let existing = db.items.find(i => i.model === model && i.folder === folder);
+            if(existing) {
+                existing.qty += qty;
+                existing.price = price;
+                existing.supplier = supplier || existing.supplier;
+            } else {
+                db.items.push({ 
+                    id: Date.now(), 
+                    folder, 
+                    model, 
+                    price, 
+                    qty, 
+                    supplier: supplier || '' 
+                });
+            }
+            
+            // Log transaction
+            db.transactions.push({
+                id: Date.now(),
+                type: 'IN',
+                folder,
+                model,
+                qty,
+                price,
+                supplier,
+                date: new Date().toISOString(),
+                unit: '',
+                notes: `Stock added: ${qty} units`
+            });
+            
+            save(); 
+            alert("Stock updated successfully!"); 
+            document.getElementById('itemModel').value = '';
+            document.getElementById('itemPrice').value = '';
+            document.getElementById('itemQty').value = '';
+            document.getElementById('itemSupplier').value = '';
+            showTab('ledger');
+        }
+
+        function confirmIssue() {
+            const id = document.getElementById('issueItemSelect').value;
+            const qty = parseFloat(document.getElementById('issueQty').value) || 0;
+            const unit = document.getElementById('issueUnit').value;
+            const notes = document.getElementById('issueNotes').value.trim();
+            
+            const item = db.items.find(i => i.id == id);
+            if(!item) {
+                alert("Please select an item!");
+                return;
+            }
+            
+            if(item.qty < qty) {
+                alert("Insufficient stock!");
+                return;
+            }
+            
+            item.qty -= qty;
+            
+            // Log transaction
+            db.transactions.push({
+                id: Date.now(),
+                type: 'OUT',
+                folder: item.folder,
+                model: item.model,
+                qty: -qty, // Negative for out
+                price: item.price,
+                supplier: item.supplier,
+                date: new Date().toISOString(),
+                unit,
+                notes: notes || `Issued to ${unit}`
+            });
