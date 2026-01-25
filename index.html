@@ -3,276 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFIDC | Smart Ledger System</title>
+    <title>BFIDC | Smart Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
-        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f4f8; }
-        
-        /* Govt SRN Paper Style */
-        .srn-paper { border: 2px solid #000; background: #fffde7; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 900px; margin: auto; }
-        
-        /* Blue Ledger Style - Exactly as Image */
-        .ledger-container { background-color: #a2d2ff; border: 2px solid #075985; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
-        .ledger-table { width: 100%; border-collapse: collapse; background: white; border: 1px solid #075985; }
-        .ledger-table th { border: 1px solid #075985; padding: 5px; font-size: 11px; background: #bae6fd; text-align: center; color: #0c4a6e; }
-        .ledger-table td { border: 1px solid #075985; padding: 8px; font-size: 12px; text-align: center; color: #000; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f4f7f6; }
 
-        .btn-action { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; color: white; transition: 0.2s; }
-        .nav-active { background: #065f46; color: white; }
+        /* SRN Form Styling - Exactly like the Image */
+        .srn-original-style {
+            background-color: #fffde7; /* হালকা হলুদ রঙ */
+            border: 1.5px solid #000;
+            padding: 30px;
+            max-width: 850px;
+            margin: 20px auto;
+            color: #000;
+            position: relative;
+        }
+        .govt-header { text-align: center; margin-bottom: 15px; }
+        .govt-header h1 { font-size: 20px; font-weight: bold; margin: 0; }
+        .govt-header p { font-size: 13px; margin: 2px 0; }
+        .form-title { text-decoration: underline; font-weight: bold; font-size: 16px; margin-top: 10px; display: inline-block; }
+
+        .form-meta { display: flex; justify-content: space-between; margin: 15px 0; font-size: 14px; font-weight: bold; }
+        .dotted-line { border-bottom: 1.5px dotted #000; display: inline-block; padding: 0 10px; min-width: 100px; }
+
+        .main-table { width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 10px; }
+        .main-table th, .main-table td { border: 1.2px solid #000; padding: 8px; text-align: center; font-size: 13px; }
+        .main-table th { background: #f0f0f0; }
+
+        /* Signature Section */
+        .signature-section { display: flex; justify-content: space-between; margin-top: 60px; font-size: 14px; font-weight: bold; }
+        .sign-box { text-align: center; width: 200px; }
+        .sign-line { border-top: 1.5px solid #000; margin-bottom: 5px; }
 
         @media print {
-            .no-print { display: none !important; }
             body { background: white; }
-            .printable-area { visibility: visible !important; position: absolute; left: 0; top: 0; width: 100%; }
-            .ledger-container { background: none !important; border: 1px solid #000 !important; }
-            .ledger-table th { background: #eee !important; color: black !important; border: 1px solid #000 !important; }
-            .ledger-table td { border: 1px solid #000 !important; }
+            .no-print { display: none !important; }
+            .srn-original-style { box-shadow: none; border: 1.5px solid #000; margin: 0; width: 100%; }
+            .printable-only { display: block !important; }
         }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-10">
 
-    <header class="bg-[#1e293b] text-white p-5 sticky top-0 z-50 no-print flex justify-between items-center shadow-lg">
-        <div>
-            <h1 class="text-lg font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
-            <p class="text-xs text-emerald-400 font-semibold tracking-wider">স্মার্ট স্টোর ম্যানেজমেন্ট</p>
-        </div>
+    <header class="bg-[#212121] text-white p-4 no-print flex justify-between items-center shadow-lg">
+        <h1 class="font-bold">BFIDC | ডিজিটাল স্টোর ম্যানেজমেন্ট</h1>
+        <button onclick="showPage('entry')" class="bg-emerald-600 px-4 py-2 rounded font-bold text-xs">নতুন এন্ট্রি</button>
     </header>
 
-    <main class="p-4 max-w-6xl mx-auto space-y-6">
-        
-        <div class="flex bg-white p-1 rounded-2xl shadow-md no-print overflow-x-auto gap-1">
-            <button onclick="showPage('entry')" id="tab-entry" class="flex-1 py-3 text-sm font-bold nav-active rounded-xl">ডাটা এন্ট্রি</button>
-            <button onclick="showPage('srn')" id="tab-srn" class="flex-1 py-3 text-sm font-bold">SRN বই</button>
-            <button onclick="showPage('ledger')" id="tab-ledger" class="flex-1 py-3 text-sm font-bold">লেজার বুক</button>
-            <button onclick="showPage('asset')" id="tab-asset" class="flex-1 py-3 text-sm font-bold">স্থায়ী সম্পদ</button>
-        </div>
-
-        <section id="entry-page" class="bg-white p-6 rounded-3xl shadow-xl space-y-5 no-print border-t-8 border-emerald-800">
-            <h2 class="text-xl font-bold text-gray-700 border-b pb-3 uppercase">তথ্য এন্ট্রি ফরম</h2>
-            <input type="hidden" id="edit-id">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="srn-no" placeholder="এস আর এন নং / বিল নং" class="p-3 border rounded-xl outline-none border-gray-300">
-                <input type="date" id="srn-date" class="p-3 border rounded-xl outline-none border-gray-300">
+    <main class="p-4">
+        <section id="entry-page" class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md no-print border-t-4 border-emerald-600">
+            <h2 class="font-bold border-b pb-2 mb-4">ভাণ্ডার এন্ট্রি ফরম</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <input type="text" id="srn-no" placeholder="ক্রমিক নং" class="p-2 border rounded">
+                <input type="date" id="srn-date" class="p-2 border rounded">
             </div>
-
-            <input type="text" id="from-vendor" placeholder="কোথা হতে প্রাপ্ত / কার নিকট বিলি" class="p-3 border w-full rounded-xl outline-none border-gray-300">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <select id="reg-type" onchange="updateItemList()" class="p-3 border rounded-xl bg-emerald-50 font-bold border-emerald-200">
-                    <option value="">রেজিস্টার নির্বাচন করুন</option>
-                    <option value="1">১ নং রেজিস্টার</option>
-                    <option value="2">২ নং রেজিস্টার</option>
-                    <option value="3">৩ নং রেজিস্টার</option>
-                </select>
-                <select id="item-cat" class="p-3 border rounded-xl border-gray-300"></select>
+            <input type="text" id="vendor" placeholder="কোথা হতে প্রাপ্ত" class="w-full p-2 border rounded mb-4">
+            <input type="text" id="item-name" placeholder="মালামালের বিবরণ" class="w-full p-2 border rounded mb-4">
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <input type="text" id="unit" placeholder="একক" class="p-2 border rounded">
+                <input type="number" id="qty" placeholder="পরিমাণ" class="p-2 border rounded">
+                <input type="number" id="price" placeholder="দর" class="p-2 border rounded">
             </div>
-
-            <textarea id="item-detail" placeholder="মালামালের বিবরণ (সাইজ, টাইপ ইত্যাদি)" class="p-3 border w-full rounded-xl h-24 border-gray-300"></textarea>
-            
-            <div class="grid grid-cols-3 gap-3">
-                <input type="text" id="unit" placeholder="একক" class="p-3 border rounded-xl border-gray-300">
-                <input type="number" id="qty" placeholder="পরিমাণ" class="p-3 border rounded-xl border-gray-300">
-                <input type="number" id="price" placeholder="দর" class="p-3 border rounded-xl border-gray-300">
-            </div>
-
-            <button onclick="handleSave()" class="w-full bg-[#065f46] text-white py-4 rounded-xl font-bold uppercase shadow-lg hover:bg-[#064e3b]">তথ্য সংরক্ষণ করুন</button>
+            <button onclick="saveData()" class="w-full bg-emerald-700 text-white py-3 rounded font-bold">সংরক্ষণ করুন</button>
         </section>
 
-        <section id="srn-page" class="hidden space-y-8"></section>
-
-        <section id="ledger-page" class="hidden space-y-6">
-            <div class="no-print bg-white p-4 rounded-xl shadow-md flex gap-2">
-                <input type="text" id="ledger-search" onkeyup="renderLedger()" placeholder="মালামালের নাম লিখে সার্চ..." class="flex-1 p-3 border rounded-xl outline-none">
-            </div>
-            <div id="ledger-container"></div>
-        </section>
-
-        <section id="asset-page" class="hidden bg-white p-6 rounded-3xl border-2 border-black">
-            <h2 class="text-center font-bold underline mb-4 text-lg">স্থায়ী সম্পদ রেজিস্টার</h2>
-            <table class="w-full border-collapse border border-black">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="border border-black p-2 text-xs">ক্র: নং</th>
-                        <th class="border border-black p-2 text-xs">বিবরণ</th>
-                        <th class="border border-black p-2 text-xs">শাখা/অবস্থান</th>
-                        <th class="border border-black p-2 text-xs">তারিখ</th>
-                    </tr>
-                </thead>
-                <tbody id="asset-body"></tbody>
-            </table>
-        </section>
+        <section id="srn-page" class="mt-8 space-y-10">
+            </section>
     </main>
 
     <script>
-        const DB_KEY = 'BFIDC_FINAL_SYSTEM_V5';
-        const categories = {
-            "1": ["খুচরা যন্ত্রাংশ", "জেনারেটর মালামাল", "বোট/ইঞ্জিন মালামাল", "পাম্পের যন্ত্রাংশ", "জি আই ফিটিংস"],
-            "2": ["ইলেকট্রিক মালামাল", "এস টি বি মালামাল", "গ্রাইডিং মালামাল", "টুলস মালামাল", "আয়রন এন্ড স্টিল মালামাল", "লিভারেজ মালামাল", "ওয়েল্ডিং মালামাল", "ওয়্যার রোপ এন্ড ফিটিংস", "মিতসুবিশি জীপ নং রাঙা ঘ ১১-০০৫১", "স' সুইজিং মেশিন", "স' ইকুলাইজিং মেশিন", "এসটিবি কেমিক্যাল মালামাল", "পি.ও.এল/লুব্রিকেন্ট মালামাল", "কম্পিউটার মালামাল"],
-            "3": ["স্টেশনারী মালামাল", "নাট/বোল্ট", "টেস্ট হাউস সাপ্লাই মালামাল", "পাইপ এন্ড ফিটিংস মালামাল", "হিনো ট্রাক নং- রাঙামাটি-উ-০৫০০০৩", "টি-বোল্ট মালামাল", "স্পিনিং মালামাল", "জেনারেটর/ফটোকপি মেশিন", "মটর সাইকেল মালামাল"]
-        };
+        const DB_NAME = "BFIDC_SRN_DATA_FINAL";
+        let store = JSON.parse(localStorage.getItem(DB_NAME)) || [];
 
-        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-
-        function updateItemList() {
-            const reg = document.getElementById('reg-type').value;
-            const select = document.getElementById('item-cat');
-            select.innerHTML = '<option value="">মালামালের প্রকার</option>';
-            if(categories[reg]) {
-                categories[reg].forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`);
-            }
-        }
-
-        function handleSave() {
-            const editId = document.getElementById('edit-id').value;
+        function saveData() {
             const data = {
-                id: editId ? parseInt(editId) : Date.now(),
+                id: Date.now(),
                 srn: document.getElementById('srn-no').value,
                 date: document.getElementById('srn-date').value,
-                vendor: document.getElementById('from-vendor').value,
-                reg: document.getElementById('reg-type').value,
-                cat: document.getElementById('item-cat').value,
-                detail: document.getElementById('item-detail').value,
+                from: document.getElementById('vendor').value,
+                item: document.getElementById('item-name').value,
                 unit: document.getElementById('unit').value,
-                qty: parseFloat(document.getElementById('qty').value) || 0,
-                price: parseFloat(document.getElementById('price').value) || 0
+                qty: document.getElementById('qty').value,
+                price: document.getElementById('price').value
             };
-
-            if(!data.srn || !data.cat) return alert("তথ্য অসম্পূর্ণ!");
-
-            if(editId) {
-                const idx = db.findIndex(x => x.id === data.id);
-                db[idx] = data;
-            } else {
-                db.push(data);
-            }
-
-            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            if(!data.srn || !data.item) return alert("তথ্য পূরণ করুন!");
+            store.push(data);
+            localStorage.setItem(DB_NAME, JSON.stringify(store));
             location.reload();
         }
 
-        function renderSRN() {
+        function renderData() {
             const container = document.getElementById('srn-page');
-            container.innerHTML = db.slice().reverse().map(d => `
-                <div id="srn-${d.id}" class="srn-paper relative">
-                    <div class="no-print absolute top-2 right-2 flex gap-2">
-                        <button onclick="editData(${d.id})" class="bg-blue-600 text-white px-3 py-1 rounded text-xs">এডিট</button>
+            container.innerHTML = store.slice().reverse().map(d => `
+                <div class="srn-original-style shadow-lg">
+                    <div class="no-print flex justify-end gap-2 mb-4">
                         <button onclick="window.print()" class="bg-black text-white px-3 py-1 rounded text-xs">প্রিন্ট</button>
+                        <button onclick="deleteItem(${d.id})" class="text-red-600 border border-red-600 px-3 py-1 rounded text-xs">মুছুন</button>
                     </div>
-                    <div class="text-center border-b border-black mb-4">
-                        <h2 class="font-bold text-lg">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h2>
-                        <h3 class="font-bold underline text-sm">ভাণ্ডার গ্রহণ পত্র</h3>
+
+                    <div class="govt-header">
+                        <h1>বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
+                        <p>লাম্বার প্রসেসিং কমপ্লেক্স ও ফার্ণিচার ইউনিট</p>
+                        <p>কাপতাই, রাঙামাটি পার্বত্য জেলা।</p>
+                        <span class="form-title">ভাণ্ডার গ্রহণ পত্র</span>
                     </div>
-                    <div class="flex justify-between font-bold text-[11px] mb-2">
-                        <span>এস আর এন নং: ${d.srn}</span>
-                        <span>তারিখ: ${d.date}</span>
+
+                    <div class="form-meta">
+                        <div>ক্রমিক নং - <span class="dotted-line">${d.srn}</span></div>
+                        <div>তারিখ: <span class="dotted-line">${d.date}</span></div>
                     </div>
-                    <p class="font-bold text-[11px] mb-4">কোথা হতে প্রাপ্ত: ${d.vendor}</p>
-                    <table class="w-full border-collapse border border-black">
+
+                    <div style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">
+                        নিম্ন লিখিত মালামালগুলো <span class="dotted-line" style="min-width: 250px;">${d.from}</span> হইতে অত্র পত্র মোতাবেক বুঝিয়া পাইলাম।
+                    </div>
+
+                    <table class="main-table">
                         <thead>
-                            <tr class="bg-gray-100">
-                                <th class="border border-black p-1 text-xs">মালামালের বিবরণ</th>
-                                <th class="border border-black p-1 text-xs">একক</th>
-                                <th class="border border-black p-1 text-xs">পরিমাণ</th>
-                                <th class="border border-black p-1 text-xs">দর</th>
-                                <th class="border border-black p-1 text-xs">মূল্য</th>
+                            <tr>
+                                <th width="5%">ক্র: নং</th>
+                                <th width="45%">মালামালের বিবরণ</th>
+                                <th width="10%">একক</th>
+                                <th width="10%">পরিমাণ</th>
+                                <th width="10%">বিল নং</th>
+                                <th width="10%">দর</th>
+                                <th width="10%">মূল্য</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="border border-black p-2 text-xs text-left font-bold">${d.cat} - ${d.detail}</td>
-                                <td class="border border-black p-2 text-xs">${d.unit}</td>
-                                <td class="border border-black p-2 text-xs">${d.qty}</td>
-                                <td class="border border-black p-2 text-xs">${d.price}</td>
-                                <td class="border border-black p-2 text-xs font-bold">${(d.qty * d.price).toLocaleString()}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            `).join('');
-        }
-
-        function renderLedger() {
-            const query = document.getElementById('ledger-search').value.toLowerCase();
-            const container = document.getElementById('ledger-container');
-            const filtered = db.filter(d => d.cat.toLowerCase().includes(query) || d.detail.toLowerCase().includes(query));
-
-            container.innerHTML = filtered.map(d => `
-                <div class="ledger-container">
-                    <div class="flex justify-between items-center mb-2 px-1">
-                        <h4 class="font-bold text-blue-900 underline text-xs">ভাণ্ডার মূল খতিয়ান (রেজিস্টার: ${d.reg})</h4>
-                        <span class="text-xs font-bold">মালের নাম: ${d.cat}</span>
-                    </div>
-                    <table class="ledger-table">
-                        <thead>
-                            <tr>
-                                <th rowspan="2" width="10%">তারিখ</th>
-                                <th rowspan="2" width="25%">বিবরণ</th>
-                                <th colspan="3" width="30%">প্রাপ্তি (Receipt)</th>
-                                <th colspan="3" width="25%">বিলি (Issue)</th>
-                                <th rowspan="2" width="10%">স্থিতি (Balance)</th>
-                            </tr>
-                            <tr>
-                                <th>SRN নং</th><th>পরিমাণ</th><th>দর</th>
-                                <th>বিল নং</th><th>পরিমাণ</th><th>দর</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>${d.date}</td>
-                                <td class="text-left font-bold">${d.detail}</td>
-                                <td>${d.srn}</td>
+                                <td>১</td>
+                                <td style="text-align: left; font-weight: bold;">${d.item}</td>
+                                <td>${d.unit}</td>
                                 <td>${d.qty}</td>
+                                <td>-</td>
                                 <td>${d.price}</td>
-                                <td>-</td><td>-</td><td>-</td>
-                                <td class="font-bold text-blue-700">${d.qty}</td>
+                                <td class="font-bold">${(d.qty * d.price).toLocaleString()}</td>
                             </tr>
+                            <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                         </tbody>
                     </table>
+
+                    <div class="signature-section">
+                        <div class="sign-box">
+                            <div class="sign-line"></div>
+                            <p>গ্রহণকারী</p>
+                            <p style="font-size: 11px;">তারিখ-</p>
+                        </div>
+                        <div class="sign-box">
+                            <div class="sign-line"></div>
+                            <p>তদন্তকারী / পরিদর্শক</p>
+                            <p style="font-size: 11px;">তারিখ-</p>
+                        </div>
+                    </div>
+                    <div style="text-align: left; font-size: 10px; margin-top: 10px;">ফরম-পি-৭</div>
                 </div>
             `).join('');
         }
 
-        function renderAsset() {
-            const body = document.getElementById('asset-body');
-            body.innerHTML = db.map((d, i) => `
-                <tr>
-                    <td class="border border-black p-2 text-xs">${i+1}</td>
-                    <td class="border border-black p-2 text-xs text-left font-bold">${d.cat} (${d.detail})</td>
-                    <td class="border border-black p-2 text-xs uppercase">${d.vendor}</td>
-                    <td class="border border-black p-2 text-xs">${d.date}</td>
-                </tr>
-            `).join('');
+        function deleteItem(id) {
+            if(confirm("মুছে ফেলবেন?")) {
+                store = store.filter(x => x.id !== id);
+                localStorage.setItem(DB_NAME, JSON.stringify(store));
+                location.reload();
+            }
         }
 
-        function showPage(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
-            document.getElementById(id + '-page').classList.remove('hidden');
-            document.getElementById('tab-' + id).classList.add('nav-active');
-            if(id === 'srn') renderSRN();
-            if(id === 'ledger') renderLedger();
-            if(id === 'asset') renderAsset();
-        }
-
-        function editData(id) {
-            const d = db.find(x => x.id === id);
-            document.getElementById('edit-id').value = d.id;
-            document.getElementById('srn-no').value = d.srn;
-            document.getElementById('srn-date').value = d.date;
-            document.getElementById('from-vendor').value = d.vendor;
-            document.getElementById('reg-type').value = d.reg;
-            updateItemList();
-            document.getElementById('item-cat').value = d.cat;
-            document.getElementById('item-detail').value = d.detail;
-            document.getElementById('unit').value = d.unit;
-            document.getElementById('qty').value = d.qty;
-            document.getElementById('price').value = d.price;
-            showPage('entry');
-        }
+        renderData();
     </script>
 </body>
 </html>
