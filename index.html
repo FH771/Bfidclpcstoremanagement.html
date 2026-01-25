@@ -10,137 +10,122 @@
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
         body { font-family: 'Hind Siliguri', sans-serif; background-color: #fdfdfd; }
         
-        /* Watermark Background */
         .watermark {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             opacity: 0.08; z-index: -1; width: 350px; pointer-events: none;
         }
 
-        /* Railway Form Style */
-        .railway-form { border: 2px solid #000; padding: 20px; background: #fff; }
-        .railway-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .railway-table th, .railway-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 13px; }
-        .railway-table th { background-color: #f2f2f2; font-weight: bold; }
+        /* Railway / Govt Book Style */
+        .srn-book { border: 2px solid #000; padding: 20px; background: #fff; max-width: 800px; margin: auto; }
+        .srn-table { width: 100%; border-collapse: collapse; }
+        .srn-table th, .srn-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 14px; }
+        .srn-table th { background-color: #f2f2f2; }
 
         .red-alert { color: white; background-color: #d32f2f; font-weight: bold; padding: 2px 4px; border-radius: 3px; }
         .tab-btn-active { border-bottom: 4px solid #004d40; color: #004d40; font-weight: bold; }
         
-        @media print { .no-print { display: none; } }
+        @media print { .no-print { display: none; } .srn-book { border: none; } }
     </style>
 </head>
 <body class="pb-20">
 
     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/02/Bangladesh_Forest_Industries_Development_Corporation_logo.png/220px-Bangladesh_Forest_Industries_Development_Corporation_logo.png" class="watermark" alt="Logo">
 
-    <div id="loginScreen" class="fixed inset-0 bg-[#004d40] z-[9999] flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-lg w-full max-w-md shadow-2xl railway-form">
-            <h2 class="text-xl font-bold text-center">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h2>
-            <p class="text-center text-emerald-700 font-bold mb-6 italic underline">স্মার্ট স্টোর ম্যানেজমেন্ট</p>
-            <div class="space-y-4">
-                <input type="email" id="email" placeholder="ইমেইল অ্যাড্রেস" class="w-full p-3 border border-black outline-none">
-                <input type="password" id="otp" placeholder="পাসওয়ার্ড / ওটিপি" class="w-full p-3 border border-black outline-none text-center tracking-widest">
-                <button onclick="login()" class="w-full bg-black text-white py-3 font-bold hover:bg-gray-800 transition">প্রবেশ করুন</button>
+    <header class="bg-[#004d40] text-white p-4 text-center sticky top-0 z-40 no-print">
+        <h1 class="text-xl font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
+        <p class="text-sm font-bold uppercase tracking-widest text-emerald-300">স্মার্ট স্টোর ম্যানেজমেন্ট</p>
+    </header>
+
+    <main class="p-4 max-w-6xl mx-auto">
+        
+        <div class="mb-6 flex gap-2 no-print">
+            <input type="text" id="masterSearch" onkeyup="liveSearch()" placeholder="SRN নং বা মালামাল দিয়ে সার্চ দিন..." class="flex-1 p-3 border-2 border-emerald-800 rounded-lg outline-none">
+            <button onclick="showTab('srn')" class="bg-[#004d40] text-white px-4 rounded-lg">এন্ট্রি করুন</button>
+        </div>
+
+        <section id="srn-tab" class="tab-content no-print bg-white p-6 rounded-lg shadow-md mb-6 border-t-4 border-emerald-900">
+            <input type="hidden" id="editId">
+            <h3 class="font-bold text-gray-800 mb-4 text-lg underline">ভাণ্ডার গ্রহণ পত্র (SRN) ডাটা এন্ট্রি</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <input type="text" id="srnInput" placeholder="এস আর এন নং" class="p-2 border border-gray-400 rounded">
+                <input type="date" id="dateInput" class="p-2 border border-gray-400 rounded">
+                <input type="text" id="fromInput" placeholder="কোথা হতে প্রাপ্ত" class="p-2 border border-gray-400 rounded">
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <select id="regSelect" onchange="loadItems()" class="p-2 border border-gray-400 rounded font-bold">
+                    <option value="">রেজিস্টার সিলেক্ট করুন</option>
+                    <option value="1">১ নং রেজিস্টার</option>
+                    <option value="2">২ নং রেজিস্টার</option>
+                    <option value="3">৩ নং রেজিস্টার</option>
+                </select>
+                <select id="itemSelect" class="p-2 border border-gray-400 rounded"></select>
+            </div>
+            <textarea id="detailInput" placeholder="মালামালের বিস্তারিত বিবরণ..." class="w-full p-2 border border-gray-400 rounded mb-4"></textarea>
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <input type="text" id="unitInput" placeholder="একক" class="p-2 border border-gray-400 rounded">
+                <input type="number" id="qtyInput" placeholder="পরিমাণ" class="p-2 border border-gray-400 rounded">
+                <input type="number" id="priceInput" placeholder="দর" class="p-2 border border-gray-400 rounded">
+            </div>
+            <button id="saveBtn" onclick="saveData()" class="w-full bg-[#004d40] text-white py-3 rounded-lg font-bold uppercase shadow-lg">সংরক্ষণ করুন</button>
+        </section>
+
+        <div id="srnView" class="srn-book hidden shadow-2xl">
+            <div class="text-center mb-6">
+                <h2 class="text-lg font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h2>
+                <h3 class="font-bold">ভাণ্ডার গ্রহণ পত্র</h3>
+                <div class="flex justify-between mt-4 border-b border-black pb-1">
+                    <span>এস আর এন নং: <b id="viewSrn"></b></span>
+                    <span>তারিখ: <b id="viewDate"></b></span>
+                </div>
+                <div class="text-left mt-2 border-b border-black pb-1">
+                    <span>কোথা হতে প্রাপ্ত: <b id="viewFrom"></b></span>
+                </div>
+            </div>
+            <table class="srn-table">
+                <thead>
+                    <tr>
+                        <th width="10%">ক্র: নং</th>
+                        <th width="40%">মালামালের বিবরণ</th>
+                        <th width="10%">একক</th>
+                        <th width="10%">পরিমাণ</th>
+                        <th width="15%">দর</th>
+                        <th width="15%">মূল্য</th>
+                    </tr>
+                </thead>
+                <tbody id="viewTableBody"></tbody>
+            </table>
+            <div class="mt-10 flex justify-between px-10 no-print">
+                <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold">প্রিন্ট দিন</button>
+                <button onclick="hideSrnView()" class="bg-gray-600 text-white px-6 py-2 rounded-lg font-bold">বন্ধ করুন</button>
             </div>
         </div>
-    </div>
 
-    <div id="mainContent" class="hidden">
-        <header class="bg-white border-b-2 border-black p-4 text-center sticky top-0 z-40">
-            <h1 class="text-xl font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
-            <p class="text-sm font-bold uppercase tracking-widest">স্মার্ট স্টোর ম্যানেজমেন্ট</p>
-        </header>
+        <div id="listTable" class="bg-white p-4 rounded-lg shadow-md overflow-x-auto no-print">
+            <h3 class="font-bold mb-4">সব এন্ট্রির তালিকা (লেজার ভিউ)</h3>
+            <table class="w-full text-center border-collapse">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="border p-2">তারিখ</th>
+                        <th class="border p-2">SRN নং</th>
+                        <th class="border p-2 text-left">বিবরণ</th>
+                        <th class="border p-2">পরিমাণ</th>
+                        <th class="border p-2">অ্যাকশন</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTableBody"></tbody>
+            </table>
+        </div>
 
-        <nav class="flex justify-around bg-gray-100 border-b border-black no-print">
-            <button onclick="showTab('srn')" id="btn-srn" class="py-3 flex-1 tab-btn-active">SRN বই</button>
-            <button onclick="showTab('ledger')" id="btn-ledger" class="py-3 flex-1 text-gray-500">লেজার বুক</button>
-            <button onclick="showTab('asset')" id="btn-asset" class="py-3 flex-1 text-gray-500">স্থায়ী সম্পদ</button>
-        </nav>
-
-        <main class="p-4 max-w-6xl mx-auto">
-            
-            <div class="mb-6 flex gap-2 no-print">
-                <input type="text" id="masterSearch" onkeyup="liveSearch()" placeholder="যেকোনো তথ্য সার্চ করুন (SRN, মালের নাম, শাখা)..." class="flex-1 p-3 border border-black outline-none">
-            </div>
-
-            <section id="srn-tab" class="tab-content railway-form space-y-4">
-                <div class="flex justify-between font-bold border-b border-black pb-2 mb-4 uppercase">
-                    <span>ভাণ্ডার গ্রহণ পত্র (SRN)</span>
-                    <span id="displaySrn">নতুন এন্ট্রি</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input type="text" id="srnInput" placeholder="এস আর এন নং" class="p-2 border border-black outline-none">
-                    <input type="date" id="dateInput" class="p-2 border border-black outline-none">
-                    <input type="text" id="fromInput" placeholder="কোথা হতে প্রাপ্ত" class="p-2 border border-black outline-none">
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <select id="regSelect" onchange="loadItems()" class="p-2 border border-black font-bold">
-                        <option value="">রেজিস্টার সিলেক্ট করুন</option>
-                        <option value="1">১ নং রেজিস্টার (খুচরা যন্ত্রাংশ)</option>
-                        <option value="2">২ নং রেজিস্টার (ইলেকট্রিক ও অন্যান্য)</option>
-                        <option value="3">৩ নং রেজিস্টার (হার্ডওয়্যার ও স্টেশনারী)</option>
-                    </select>
-                    <select id="itemSelect" class="p-2 border border-black outline-none"></select>
-                </div>
-                <input type="text" id="detailInput" placeholder="মালামালের বিস্তারিত বিবরণ (যেমন: পিস্টন রিং, ৫/৮ সাইজ)" class="w-full p-2 border border-black outline-none">
-                <div class="grid grid-cols-3 gap-4">
-                    <input type="text" id="unitInput" placeholder="একক" class="p-2 border border-black">
-                    <input type="number" id="qtyInput" placeholder="পরিমাণ" class="p-2 border border-black">
-                    <input type="number" id="priceInput" placeholder="দর" class="p-2 border border-black">
-                </div>
-                <button onclick="saveData()" class="w-full bg-black text-white py-4 font-bold uppercase tracking-widest hover:bg-gray-900 shadow-lg">তথ্য সংরক্ষণ করুন</button>
-            </section>
-
-            <section id="ledger-tab" class="tab-content hidden overflow-x-auto">
-                <table class="railway-table shadow-sm">
-                    <thead>
-                        <tr>
-                            <th>তারিখ</th>
-                            <th>এস আর এন</th>
-                            <th>বিবরণ ও বিস্তারিত</th>
-                            <th>প্রাপ্তি</th>
-                            <th>দর</th>
-                            <th>স্থিতি</th>
-                            <th class="no-print">অ্যাকশন</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dataTableBody"></tbody>
-                </table>
-            </section>
-
-            <section id="asset-tab" class="tab-content hidden railway-form">
-                <h3 class="text-center font-bold underline mb-4 uppercase">স্থায়ী সম্পদ রেজিস্টার</h3>
-                <table class="railway-table">
-                    <thead>
-                        <tr>
-                            <th>ক্র: নং</th>
-                            <th>সম্পদের নাম ও বিবরণ</th>
-                            <th>শাখা/ব্যক্তির নাম</th>
-                            <th>তারিখ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="assetTableBody"></tbody>
-                </table>
-            </section>
-        </main>
-    </div>
+    </main>
 
     <script>
         const regItems = {
             "1": ["খুচরা যন্ত্রাংশ", "জেনারেটর মালামাল", "বোট/ইঞ্জিন মালামাল", "পাম্পের যন্ত্রাংশ", "৩ ডিসেল ইঞ্জিন মালামাল", "জি আই ফিটিংস"],
-            "2": ["ইলেকট্রিক মালামাল", "এসটিবি মালামাল", "গ্রাইডিং মালামাল", "টুলস মালামাল", "আয়রন এন্ড স্টিল", "লিভারেজ মালামাল", "ওয়েল্ডিং মালামাল", "অয়্যার রোপ", "কম্পিউটার মালামাল"],
+            "2": ["ইলেকট্রিক মালামাল", "এসটিবি মালামাল", "গ্রাইডিং মালামাল", "টুলস মালামাল", "আয়রন এন্ড স্টিল", "লিভারেজ মালামাল", "ওয়েল্ডিং মালামাল", "পি.ও.এল/লুব্রিকেন্ট", "কম্পিউটার মালামাল"],
             "3": ["স্টেশনারী মালামাল", "নাট/বোল্ট", "টেস্ট হাউস সাপ্লাই", "পাইপ এন্ড ফিটিংস", "হিনো ট্রাক মালামাল", "মটর সাইকেল মালামাল"]
         };
 
-        let database = JSON.parse(localStorage.getItem('bfidc_v11')) || [];
-
-        function login() {
-            const e = document.getElementById('email').value;
-            const p = document.getElementById('otp').value;
-            if(e && p === '1234') { // Default Pass
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-            } else { alert("সঠিক তথ্য দিন!"); }
-        }
+        let database = JSON.parse(localStorage.getItem('bfidc_smart_v12')) || [];
 
         function loadItems() {
             const reg = document.getElementById('regSelect').value;
@@ -154,11 +139,13 @@
         }
 
         function saveData() {
+            const editId = document.getElementById('editId').value;
             const entry = {
-                id: Date.now(),
+                id: editId ? parseInt(editId) : Date.now(),
                 srn: document.getElementById('srnInput').value,
                 date: document.getElementById('dateInput').value,
                 from: document.getElementById('fromInput').value,
+                reg: document.getElementById('regSelect').value,
                 category: document.getElementById('itemSelect').value,
                 detail: document.getElementById('detailInput').value,
                 unit: document.getElementById('unitInput').value,
@@ -166,71 +153,107 @@
                 price: parseFloat(document.getElementById('priceInput').value) || 0
             };
 
-            if(!entry.srn || !entry.detail || entry.qty <= 0) return alert("তথ্য অসম্পূর্ণ!");
+            if(!entry.srn || !entry.detail) return alert("তথ্য পূরণ করুন!");
 
-            database.push(entry);
-            localStorage.setItem('bfidc_v11', JSON.stringify(database));
-            alert("সফলভাবে সেভ হয়েছে!");
-            location.reload();
+            if(editId) {
+                const idx = database.findIndex(d => d.id === entry.id);
+                database[idx] = entry;
+                alert("তথ্য আপডেট করা হয়েছে!");
+            } else {
+                database.push(entry);
+                alert("নতুন এন্ট্রি সফল হয়েছে!");
+            }
+
+            localStorage.setItem('bfidc_smart_v12', JSON.stringify(database));
+            resetForm();
+            renderTable();
         }
 
-        function liveSearch() {
-            const query = document.getElementById('masterSearch').value.toLowerCase();
-            const filtered = database.filter(d => 
-                d.srn.toLowerCase().includes(query) || 
-                d.detail.toLowerCase().includes(query) || 
-                d.from.toLowerCase().includes(query)
-            );
-            renderTables(filtered);
-        }
-
-        function renderTables(data = database) {
+        function renderTable(data = database) {
             const body = document.getElementById('dataTableBody');
-            const assetBody = document.getElementById('assetTableBody');
-            body.innerHTML = ''; assetBody.innerHTML = '';
-
-            data.reverse().forEach((d, index) => {
-                // Main Ledger Table
+            body.innerHTML = '';
+            data.reverse().forEach(d => {
                 body.innerHTML += `
-                    <tr>
-                        <td>${d.date}</td>
-                        <td class="font-bold">${d.srn}</td>
-                        <td class="text-left"><b>${d.category}</b><br>${d.detail}</td>
-                        <td>${d.qty} ${d.unit}</td>
-                        <td>৳${d.price}</td>
-                        <td><span class="${d.qty <= 5 ? 'red-alert' : ''}">${d.qty}</span></td>
-                        <td class="no-print">
+                    <tr class="hover:bg-gray-50 cursor-pointer">
+                        <td onclick="openSrnView(${d.id})" class="border p-2">${d.date}</td>
+                        <td onclick="openSrnView(${d.id})" class="border p-2 font-bold">${d.srn}</td>
+                        <td onclick="openSrnView(${d.id})" class="border p-2 text-left"><b>${d.category}</b> - ${d.detail}</td>
+                        <td class="border p-2"><span class="${d.qty <= 5 ? 'red-alert' : ''}">${d.qty} ${d.unit}</span></td>
+                        <td class="border p-2 flex justify-center gap-3">
+                            <button onclick="editData(${d.id})" class="text-blue-600"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="deleteData(${d.id})" class="text-red-600"><i class="fa-solid fa-trash"></i></button>
                         </td>
-                    </tr>
-                `;
-                // Fixed Asset Style Table
-                assetBody.innerHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td class="text-left font-bold">${d.detail}</td>
-                        <td>${d.from}</td>
-                        <td>${d.date}</td>
                     </tr>
                 `;
             });
         }
 
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-btn-active'));
-            document.getElementById(tab + '-tab').classList.remove('hidden');
-            document.getElementById('btn-' + tab).classList.add('tab-btn-active');
-            renderTables();
+        function openSrnView(id) {
+            const d = database.find(x => x.id === id);
+            document.getElementById('viewSrn').innerText = d.srn;
+            document.getElementById('viewDate').innerText = d.date;
+            document.getElementById('viewFrom').innerText = d.from;
+            document.getElementById('viewTableBody').innerHTML = `
+                <tr>
+                    <td>১</td>
+                    <td class="text-left"><b>${d.category}</b><br>${d.detail}</td>
+                    <td>${d.unit}</td>
+                    <td>${d.qty}</td>
+                    <td>${d.price}</td>
+                    <td>${(d.qty * d.price).toLocaleString()}</td>
+                </tr>
+            `;
+            document.getElementById('srnView').classList.remove('hidden');
+            document.getElementById('listTable').classList.add('hidden');
+            document.getElementById('srn-tab').classList.add('hidden');
+        }
+
+        function hideSrnView() {
+            document.getElementById('srnView').classList.add('hidden');
+            document.getElementById('listTable').classList.remove('hidden');
+            document.getElementById('srn-tab').classList.remove('hidden');
+        }
+
+        function editData(id) {
+            const d = database.find(x => x.id === id);
+            document.getElementById('editId').value = d.id;
+            document.getElementById('srnInput').value = d.srn;
+            document.getElementById('dateInput').value = d.date;
+            document.getElementById('fromInput').value = d.from;
+            document.getElementById('regSelect').value = d.reg;
+            loadItems();
+            document.getElementById('itemSelect').value = d.category;
+            document.getElementById('detailInput').value = d.detail;
+            document.getElementById('unitInput').value = d.unit;
+            document.getElementById('qtyInput').value = d.qty;
+            document.getElementById('priceInput').value = d.price;
+            document.getElementById('saveBtn').innerText = "তথ্য আপডেট করুন";
+            window.scrollTo(0,0);
         }
 
         function deleteData(id) {
-            if(confirm("মুছে ফেলতে চান?")) {
+            if(confirm("আপনি কি নিশ্চিতভাবে এটি মুছে ফেলতে চান?")) {
                 database = database.filter(d => d.id !== id);
-                localStorage.setItem('bfidc_v11', JSON.stringify(database));
-                renderTables();
+                localStorage.setItem('bfidc_smart_v12', JSON.stringify(database));
+                renderTable();
             }
         }
+
+        function resetForm() {
+            document.getElementById('editId').value = "";
+            document.getElementById('saveBtn').innerText = "সংরক্ষণ করুন";
+            document.getElementById('srnInput').value = "";
+            document.getElementById('detailInput').value = "";
+            document.getElementById('qtyInput').value = "";
+        }
+
+        function liveSearch() {
+            const q = document.getElementById('masterSearch').value.toLowerCase();
+            const f = database.filter(d => d.srn.toLowerCase().includes(q) || d.detail.toLowerCase().includes(q));
+            renderTable(f);
+        }
+
+        renderTable();
     </script>
 </body>
 </html>
