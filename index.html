@@ -3,134 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFIDCLPC ERP | Store Management</title>
+    <title>BFIDCLPC ERP | Professional Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
-        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f2f5; color: #1a1a1a; }
-        .glass-card { background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; }
-        .active-tab { background: #004d40 !important; color: white !important; }
-        .low-stock { background-color: #ffebee; border-left: 5px solid #ef5350; color: #c62828 !important; font-weight: bold; }
-        .memo-header { border-bottom: 2px solid #004d40; padding-bottom: 10px; margin-bottom: 20px; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f4f7f6; color: #333; }
+        .lager-header { background: #004d40; color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; }
+        .glass-card { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #ddd; }
+        .low-stock { background-color: #ffdada !important; color: #b71c1c !important; font-weight: bold; }
+        .active-nav { background: #004d40 !important; color: white !important; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #e0e0e0; font-size: 12px; text-transform: uppercase; padding: 10px; border: 1px solid #ccc; }
+        td { padding: 10px; border: 1px solid #eee; font-size: 13px; }
     </style>
 </head>
 <body class="pb-24">
 
-    <header class="bg-[#004d40] text-white p-6 shadow-lg text-center">
-        <h1 class="text-xl font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
-        <p class="text-sm">লাম্বার প্রসেসিং কমপ্লেক্স ও রাবার ড্যাম ইউনিট, কাপ্তাই</p>
-    </header>
+    <div class="lager-header">
+        <h1 class="text-lg font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
+        <p class="text-[10px]">লাম্বার প্রসেসিং কমপ্লেক্স ও রাবার ড্যাম ইউনিট, কাপ্তাই</p>
+    </div>
 
     <main class="p-4 max-w-4xl mx-auto space-y-6">
+        
+        <section id="tab-in" class="tab-content space-y-4">
+            <div class="glass-card p-5">
+                <h2 class="text-sm font-bold mb-4 border-b pb-2 text-green-800"><i class="fa-solid fa-pen-to-square mr-2"></i>ভাণ্ডার গ্রহণ এন্ট্রি (SRN)</h2>
+                <div class="grid grid-cols-1 gap-3">
+                    <div class="flex gap-2">
+                        <input type="text" id="srnNo" placeholder="SRN নং" class="w-1/3 p-3 border rounded-lg">
+                        <input type="date" id="entryDate" class="w-2/3 p-3 border rounded-lg">
+                    </div>
+                    
+                    <select id="regSelect" onchange="updateItemList()" class="w-full p-3 border rounded-lg font-bold bg-gray-50">
+                        <option value="">রেজিস্টার সিলেক্ট করুন</option>
+                        <option value="1">১ নং রেজিস্টার (খুচরা যন্ত্রাংশ)</option>
+                        <option value="2">২ নং রেজিস্টার (ইলেকট্রিক ও হার্ডওয়্যার)</option>
+                        <option value="3">৩ নং রেজিস্টার (স্টেশনারী মালামাল)</option>
+                    </select>
 
-        <section id="tab-in" class="tab-content glass-card p-6">
-            <div class="memo-header flex justify-between items-center">
-                <h2 class="text-lg font-bold text-[#004d40]">ভাণ্ডার গ্রহণ পত্র (Memo Entry)</h2>
-                <div class="text-right">
-                    <p class="text-xs">তারিখ: <span id="currentDate"></span></p>
-                    <p class="text-xs font-bold">SRN No: <input type="text" id="srnNo" placeholder="যেমন: ১০৬১" class="border-b border-gray-300 outline-none w-16 text-center"></p>
+                    <select id="itemSelect" class="w-full p-3 border rounded-lg">
+                        <option value="">মালামাল সিলেক্ট করুন</option>
+                    </select>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="itemQty" placeholder="পরিমাণ" class="p-3 border rounded-lg">
+                        <input type="number" id="itemPrice" placeholder="দর (Unit Price)" class="p-3 border rounded-lg">
+                    </div>
+                    
+                    <button onclick="saveEntry()" class="w-full bg-green-700 text-white py-4 rounded-xl font-bold shadow-lg">মজুদ সংরক্ষণ করুন</button>
                 </div>
-            </div>
-            
-            <div class="grid grid-cols-1 gap-4">
-                <select id="regCategory" class="w-full p-3 rounded-lg border">
-                    <option value="">রেজিস্টার নং ও নাম সিলেক্ট করুন</option>
-                    <option>১ নং - খুচরা যন্ত্রাংশ</option>
-                    <option>২ নং - ইলেকট্রিক ও হার্ডওয়্যার</option>
-                    <option>৩ নং - স্টেশনারী মালামাল</option>
-                </select>
-                <input type="text" id="itemName" placeholder="মালামালের বিবরণ" class="w-full p-3 rounded-lg border">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="itemQty" placeholder="পরিমাণ" class="p-3 rounded-lg border">
-                    <input type="text" id="itemUnit" placeholder="একক (যেমন: টি, কেজি)" class="p-3 rounded-lg border">
-                </div>
-                <input type="number" id="itemPrice" placeholder="দর/মূল্য (৳)" class="w-full p-3 rounded-lg border">
-                <button onclick="saveToStock()" class="w-full bg-[#004d40] text-white py-3 rounded-lg font-bold shadow-md hover:bg-[#00332a]">সেভ করুন</button>
             </div>
         </section>
 
-        <section id="tab-ledger" class="tab-content hidden space-y-4">
-            <div class="flex justify-between items-center px-2">
-                <h2 class="font-bold text-[#004d40]">বর্তমান ভাণ্ডার স্থিতি</h2>
-                <span class="text-xs text-red-600 font-bold">* লাল মার্ক = স্টক ৫ এর নিচে</span>
-            </div>
-            <div class="glass-card overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-100 border-b">
-                        <tr>
-                            <th class="p-3">মালামাল</th>
-                            <th class="p-3 text-center">পরিমাণ</th>
-                            <th class="p-3 text-right">মূল্য</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ledgerTable" class="divide-y">
-                        </tbody>
-                </table>
+        <section id="tab-ledger" class="tab-content hidden">
+            <div class="glass-card overflow-hidden">
+                <div class="p-4 bg-gray-50 border-b flex justify-between items-center">
+                    <h2 class="font-bold text-sm">ভাণ্ডার মূল খতিয়ান (Lager Book)</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>তারিখ/SRN</th>
+                                <th>মালামালের নাম</th>
+                                <th>পরিমাণ</th>
+                                <th>দর</th>
+                                <th>মোট মূল্য</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledgerBody">
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-2 shadow-2xl z-50">
-        <button onclick="showTab('in')" id="btn-in" class="flex-1 py-2 rounded-xl active-tab"><i class="fa-solid fa-file-invoice block text-lg"></i><span class="text-[10px]">এন্ট্রি</span></button>
-        <button onclick="showTab('ledger')" id="btn-ledger" class="flex-1 py-2 rounded-xl text-gray-500"><i class="fa-solid fa-boxes-stacked block text-lg"></i><span class="text-[10px]">লেজার</span></button>
-        <button onclick="showTab('report')" id="btn-report" class="flex-1 py-2 rounded-xl text-gray-500"><i class="fa-solid fa-chart-line block text-lg"></i><span class="text-[10px]">রিপোর্ট</span></button>
+    <nav class="fixed bottom-4 left-4 right-4 bg-white flex p-2 glass-card justify-around z-50">
+        <button onclick="showTab('in')" id="btn-in" class="flex-1 py-3 rounded-lg active-nav"><i class="fa-solid fa-plus-circle"></i><br><span class="text-[10px]">এন্ট্রি</span></button>
+        <button onclick="showTab('ledger')" id="btn-ledger" class="flex-1 py-3 rounded-lg text-gray-400"><i class="fa-solid fa-book"></i><br><span class="text-[10px]">খতিয়ান</span></button>
     </nav>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('bfidclpc_v5')) || { items: [], logs: [] };
-        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('bn-BD');
+        // Data from your uploaded images
+        const itemsData = {
+            "1": ["বিয়ারিং", "ইঞ্জিন পার্টস", "পিস্টন", "লাইনার", "ভল্ভ", "কানেক্টিং রড"],
+            "2": ["ইলেকট্রিক মালামাল", "এস টি বি মালামাল", "গ্রাইন্ডিং মালামাল", "টুলস মালামাল", "আয়রণ এন্ড স্টিল", "লিভারেজ", "ওয়েল্ডিং মালামাল", "অয়্যার রোপ", "কম্পিউটার মালামাল"],
+            "3": ["স্টেশনারী মালামাল", "নাট/বোল্ট", "রেস্ট হাউজ সাপ্লাই", "পাইপ এন্ড ফিটিংস", "টায়ার টিউব", "ভি-বেল্ট", "জেনারেটর পার্টস", "মোটর সাইকেল পার্টস"]
+        };
+
+        let db = JSON.parse(localStorage.getItem('bfidclpc_v6')) || { stock: [] };
+
+        function updateItemList() {
+            const reg = document.getElementById('regSelect').value;
+            const itemDropdown = document.getElementById('itemSelect');
+            itemDropdown.innerHTML = '<option value="">মালামাল সিলেক্ট করুন</option>';
+            if(reg && itemsData[reg]) {
+                itemsData[reg].forEach(item => {
+                    itemDropdown.innerHTML += `<option value="${item}">${item}</option>`;
+                });
+            }
+        }
 
         function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById('tab-' + id)?.classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => {
-                b.classList.remove('active-tab');
-                b.classList.add('text-gray-500');
-            });
-            document.getElementById('btn-' + id).classList.add('active-tab');
-            document.getElementById('btn-' + id).classList.remove('text-gray-500');
+            document.getElementById('tab-' + id).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav', 'text-gray-400'));
+            document.getElementById('btn-' + id).classList.add('active-nav');
             if(id === 'ledger') renderLedger();
         }
 
-        function saveToStock() {
+        function saveEntry() {
+            const date = document.getElementById('entryDate').value;
             const srn = document.getElementById('srnNo').value;
-            const cat = document.getElementById('regCategory').value;
-            const name = document.getElementById('itemName').value.trim();
+            const name = document.getElementById('itemSelect').value;
             const qty = parseFloat(document.getElementById('itemQty').value) || 0;
             const price = parseFloat(document.getElementById('itemPrice').value) || 0;
 
-            if(!name || !cat) return alert("সবগুলো ঘর পূরণ করুন!");
+            if(!name || qty <= 0) return alert("সঠিক তথ্য দিন!");
 
-            let item = db.items.find(i => i.name === name && i.cat === cat);
-            if(item) {
-                item.qty += qty;
-            } else {
-                db.items.push({ name, cat, qty, price, id: Date.now() });
-            }
-
-            db.logs.push({ date: new Date().toISOString(), srn, name, qty, type: 'IN' });
-            save();
-            alert("সফলভাবে স্টক আপডেট হয়েছে!");
-            location.reload();
+            db.stock.push({ date, srn, name, qty, price, total: qty * price });
+            localStorage.setItem('bfidclpc_v6', JSON.stringify(db));
+            alert("সংরক্ষিত হয়েছে!");
+            showTab('ledger');
         }
 
         function renderLedger() {
-            const table = document.getElementById('ledgerTable');
-            table.innerHTML = db.items.map(i => `
-                <tr class="${i.qty < 5 ? 'low-stock' : ''}">
-                    <td class="p-3">
-                        <div class="font-bold">${i.name}</div>
-                        <div class="text-[10px] opacity-70">${i.cat}</div>
-                    </td>
-                    <td class="p-3 text-center font-bold">${i.qty}</td>
-                    <td class="p-3 text-right">৳${(i.qty * i.price).toLocaleString()}</td>
+            const body = document.getElementById('ledgerBody');
+            body.innerHTML = db.stock.map(item => `
+                <tr class="${item.qty < 5 ? 'low-stock' : ''}">
+                    <td>${item.date}<br><small>SRN: ${item.srn}</small></td>
+                    <td class="font-bold">${item.name}</td>
+                    <td class="text-center">${item.qty}</td>
+                    <td>৳${item.price}</td>
+                    <td class="font-bold">৳${item.total.toLocaleString()}</td>
                 </tr>
             `).join('');
         }
-
-        function save() { localStorage.setItem('bfidclpc_v5', JSON.stringify(db)); }
     </script>
 </body>
 </html>
