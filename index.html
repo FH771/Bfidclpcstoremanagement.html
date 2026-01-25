@@ -12,8 +12,8 @@
         .glass-card { background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         .low-stock { background-color: #ffdce0 !important; color: #d32f2f !important; font-weight: bold; }
         .nav-active { background: #004d40 !important; color: white !important; }
-        th { background: #004d40; color: white; padding: 12px; font-size: 12px; border: 1px solid #00332a; }
-        td { padding: 10px; border: 1px solid #ddd; text-align: center; font-size: 13px; }
+        th { background: #004d40; color: white; padding: 12px; font-size: 11px; border: 1px solid #00332a; }
+        td { padding: 10px; border: 1px solid #ddd; text-align: center; font-size: 12px; }
     </style>
 </head>
 <body class="pb-24">
@@ -26,10 +26,10 @@
     <main class="p-4 max-w-4xl mx-auto space-y-6">
         
         <section id="tab-in" class="tab-content glass-card p-6">
-            <h2 class="text-sm font-bold mb-4 text-[#004d40] border-b pb-2">ভাণ্ডার গ্রহণ এন্ট্রি (SRN)</h2>
+            <h2 class="text-sm font-bold mb-4 text-[#004d40] border-b pb-2">ভাণ্ডার গ্রহণ এন্ট্রি (SRN/Lager)</h2>
             <div class="space-y-4">
                 <div class="flex gap-2">
-                    <input type="text" id="srnNo" placeholder="SRN নং" class="w-1/3 p-3 border rounded-xl outline-none focus:border-green-600">
+                    <input type="text" id="srnNo" placeholder="SRN নং" class="w-1/3 p-3 border rounded-xl outline-none">
                     <input type="date" id="entryDate" class="w-2/3 p-3 border rounded-xl outline-none">
                 </div>
                 
@@ -41,8 +41,13 @@
                 </select>
 
                 <select id="itemSelect" class="w-full p-4 border rounded-xl bg-white">
-                    <option value="">আগে রেজিস্টার সিলেক্ট করুন</option>
+                    <option value="">মালামালের ধরন সিলেক্ট করুন</option>
                 </select>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-gray-500 ml-1">মালামালের বিস্তারিত নাম/বিবরণ লিখুন (যেমন: ইঞ্জিন পার্টস - পিস্টন রিং)</label>
+                    <input type="text" id="itemDetail" placeholder="বিস্তারিত নাম এখানে লিখুন..." class="w-full p-4 border-2 border-green-100 rounded-xl focus:border-green-600 outline-none">
+                </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <input type="number" id="itemQty" placeholder="পরিমাণ" class="p-4 border rounded-xl">
@@ -56,16 +61,16 @@
         <section id="tab-ledger" class="tab-content hidden glass-card overflow-hidden">
             <div class="p-4 bg-gray-100 font-bold text-[#004d40] flex justify-between">
                 <span>ভাণ্ডার খতিয়ান (Ledger)</span>
-                <span class="text-[10px] text-red-600">* লাল = ৫ এর কম স্টক</span>
+                <button onclick="clearData()" class="text-[10px] text-red-500 uppercase">Clear All</button>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead>
                         <tr>
                             <th>তারিখ/SRN</th>
-                            <th>মালামালের নাম</th>
+                            <th>মালামাল ও বিবরণ</th>
                             <th>পরিমাণ</th>
-                            <th>মূল্য (৳)</th>
+                            <th>মোট মূল্য</th>
                         </tr>
                     </thead>
                     <tbody id="ledgerBody"></tbody>
@@ -81,19 +86,18 @@
     </nav>
 
     <script>
-        // আপনার দেওয়া ১-৩ নং মালামালের তালিকা
         const registerItems = {
-            "1": ["বিয়ারিং (Bearing)", "ইঞ্জিন পার্টস", "পিস্টন (Piston)", "লাইনার (Liner)", "ভল্ভ (Valve)", "কানেক্টিং রড", "নজল (Nozzle)", "পাম্প পার্টস", "ফিল্টার (অয়েল/ডিজেল)"],
-            "2": ["ইলেকট্রিক বাল্ব/টিউব", "সুইচ/সকেট", "তার (Cable)", "সার্কিট ব্রেকার", "গ্রাইন্ডিং হুইল", "ওয়েল্ডিং রড", "হ্যান্ড টুলস", "নাট-বোল্ট (Nut-Bolt)", "জি আই পাইপ/ফিটিংস", "কম্পিউটার পার্টস"],
-            "3": ["স্টেশনারী মালামাল", "টায়ার ও টিউব", "ভি-বেল্ট (V-Belt)", "জেনারেটর পার্টস", "মোটর সাইকেল পার্টস", "রেস্ট হাউজ সাপ্লাই", "লুব্রিকেন্ট/মবিল", "ডিজেল/অক্টেন"]
+            "1": ["ইঞ্জিন পার্টস", "বিয়ারিং (Bearing)", "পাম্প পার্টস", "লাইনার/পিস্টন", "ফিল্টার", "খুচরা যন্ত্রাংশ"],
+            "2": ["ইলেকট্রিক মালামাল", "হার্ডওয়্যার", "তার/কেবল", "নাট-বোল্ট", "জি আই পাইপ", "কম্পিউটার মালামাল"],
+            "3": ["স্টেশনারী", "টায়ার ও টিউব", "ভি-বেল্ট", "লুব্রিকেন্ট/মবিল", "জেনারেটর পার্টস", "অন্যান্য"]
         };
 
-        let db = JSON.parse(localStorage.getItem('bfidclpc_final')) || { entries: [] };
+        let db = JSON.parse(localStorage.getItem('bfidclpc_v7')) || { entries: [] };
 
         function updateItems() {
             const reg = document.getElementById('regSelect').value;
             const itemDropdown = document.getElementById('itemSelect');
-            itemDropdown.innerHTML = '<option value="">মালামাল সিলেক্ট করুন</option>';
+            itemDropdown.innerHTML = '<option value="">মালামালের ধরন সিলেক্ট করুন</option>';
             if(reg) {
                 registerItems[reg].forEach(item => {
                     itemDropdown.innerHTML += `<option value="${item}">${item}</option>`;
@@ -112,30 +116,5 @@
         function saveEntry() {
             const date = document.getElementById('entryDate').value;
             const srn = document.getElementById('srnNo').value;
-            const name = document.getElementById('itemSelect').value;
-            const qty = parseFloat(document.getElementById('itemQty').value) || 0;
-            const price = parseFloat(document.getElementById('itemPrice').value) || 0;
-
-            if(!name || qty <= 0 || !date) return alert("দয়া করে সব তথ্য পূরণ করুন!");
-
-            db.entries.push({ date, srn, name, qty, price });
-            localStorage.setItem('bfidclpc_final', JSON.stringify(db));
-            alert("সফলভাবে সেভ হয়েছে!");
-            document.getElementById('itemQty').value = '';
-            document.getElementById('itemPrice').value = '';
-        }
-
-        function renderLedger() {
-            const body = document.getElementById('ledgerBody');
-            body.innerHTML = db.entries.map(item => `
-                <tr class="${item.qty < 5 ? 'low-stock' : ''}">
-                    <td>${item.date}<br><small class="text-gray-500">SRN: ${item.srn}</small></td>
-                    <td class="font-bold text-left">${item.name}</td>
-                    <td>${item.qty}</td>
-                    <td class="font-bold">৳${(item.qty * item.price).toLocaleString()}</td>
-                </tr>
-            `).reverse().join('');
-        }
-    </script>
-</body>
-</html>
+            const category = document.getElementById('itemSelect').value;
+            const detail = document.getElementById('itemDetail').value.trim(); // Manual input
