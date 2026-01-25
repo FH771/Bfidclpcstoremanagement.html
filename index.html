@@ -1,201 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFIDCLPC | Professional Store ERP</title>
+    <title>BFIDCLPC ERP | Store Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Hind+Siliguri:wght@400;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif; background: #0f172a; color: #f8fafc; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; }
-        .active-nav { background: #10b981 !important; color: #022c22 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
-        input, select, textarea { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; outline: none; }
-        .btn-primary { background: #10b981; color: #022c22; font-weight: 800; }
-        .btn-danger { background: #ef4444; color: white; font-weight: 800; }
-        .text-accent { color: #10b981; }
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f2f5; color: #1a1a1a; }
+        .glass-card { background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; }
+        .active-tab { background: #004d40 !important; color: white !important; }
+        .low-stock { background-color: #ffebee; border-left: 5px solid #ef5350; color: #c62828 !important; font-weight: bold; }
+        .memo-header { border-bottom: 2px solid #004d40; padding-bottom: 10px; margin-bottom: 20px; }
     </style>
 </head>
-<body class="pb-32">
-    <div id="loginScreen" class="fixed inset-0 bg-[#022c22] z-[9999] flex items-center justify-center">
-        <div class="glass p-10 w-full max-w-sm text-center">
-            <h2 class="text-3xl font-black mb-6 uppercase tracking-widest text-white">BFIDCLPC</h2>
-            <input type="password" id="passInput" placeholder="Enter Password" class="w-full p-4 rounded-xl text-center text-2xl mb-4 tracking-[10px]">
-            <button onclick="checkPass()" class="w-full btn-primary py-4 rounded-xl font-bold uppercase tracking-widest">Unlock System</button>
-        </div>
-    </div>
+<body class="pb-24">
 
-    <div id="appBody" class="hidden">
-        <header class="p-8 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-black text-accent">BFIDCLPC <span class="text-white">ERP</span></h1>
-                <p class="text-[10px] uppercase tracking-widest text-slate-400">Smart Store Management</p>
+    <header class="bg-[#004d40] text-white p-6 shadow-lg text-center">
+        <h1 class="text-xl font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
+        <p class="text-sm">লাম্বার প্রসেসিং কমপ্লেক্স ও রাবার ড্যাম ইউনিট, কাপ্তাই</p>
+    </header>
+
+    <main class="p-4 max-w-4xl mx-auto space-y-6">
+
+        <section id="tab-in" class="tab-content glass-card p-6">
+            <div class="memo-header flex justify-between items-center">
+                <h2 class="text-lg font-bold text-[#004d40]">ভাণ্ডার গ্রহণ পত্র (Memo Entry)</h2>
+                <div class="text-right">
+                    <p class="text-xs">তারিখ: <span id="currentDate"></span></p>
+                    <p class="text-xs font-bold">SRN No: <input type="text" id="srnNo" placeholder="যেমন: ১০৬১" class="border-b border-gray-300 outline-none w-16 text-center"></p>
+                </div>
             </div>
-            <button onclick="manualLock()" class="glass w-10 h-10 flex items-center justify-center text-red-400"><i class="fa-solid fa-power-off"></i></button>
-        </header>
-
-        <main class="px-6 space-y-6 max-w-4xl mx-auto">
-            <section id="tab-folders" class="tab-content space-y-4">
-                <div class="glass p-6">
-                    <h3 class="font-bold text-accent uppercase text-xs tracking-widest mb-4"><i class="fa-solid fa-folder-plus mr-2"></i>New Folder</h3>
-                    <div class="flex gap-2">
-                        <input type="text" id="newFolderInput" placeholder="Folder Name..." class="flex-1 p-3 rounded-xl text-sm">
-                        <button onclick="addFolder()" class="btn-primary px-6 py-3 rounded-xl"><i class="fa-solid fa-plus"></i></button>
-                    </div>
-                </div>
-                <div id="folderGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
-            </section>
-
-            <section id="tab-in" class="tab-content hidden glass p-6 space-y-4">
-                <h3 class="font-bold text-accent uppercase text-xs tracking-widest">Stock Entry</h3>
-                <select id="folderSelect" class="w-full p-4 rounded-xl font-bold text-sm"></select>
-                <input type="text" id="itemModel" placeholder="Item Name/Model" class="w-full p-4 rounded-xl font-bold">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="itemPrice" placeholder="Unit Price (৳)" class="w-full p-4 rounded-xl">
-                    <input type="number" id="itemQty" placeholder="Quantity" class="w-full p-4 rounded-xl">
-                </div>
-                <input type="text" id="itemSupplier" placeholder="Supplier Name" class="w-full p-4 rounded-xl">
-                <button onclick="saveStock()" class="w-full btn-primary py-4 rounded-xl font-black uppercase">Save to Stock</button>
-            </section>
-
-            <section id="tab-out" class="tab-content hidden glass p-6 space-y-4">
-                <h3 class="font-bold text-red-400 uppercase text-xs tracking-widest">Issue Resource</h3>
-                <select id="issueItemSelect" class="w-full p-4 rounded-xl text-sm font-bold"></select>
-                <input type="number" id="issueQty" placeholder="Issue Quantity" class="w-full p-4 rounded-xl">
-                <select id="issueUnit" class="w-full p-4 rounded-xl text-sm">
-                    <option>SAW MILL UNIT</option><option>PLANER MILL</option><option>WORKSHOP</option>
+            
+            <div class="grid grid-cols-1 gap-4">
+                <select id="regCategory" class="w-full p-3 rounded-lg border">
+                    <option value="">রেজিস্টার নং ও নাম সিলেক্ট করুন</option>
+                    <option>১ নং - খুচরা যন্ত্রাংশ</option>
+                    <option>২ নং - ইলেকট্রিক ও হার্ডওয়্যার</option>
+                    <option>৩ নং - স্টেশনারী মালামাল</option>
                 </select>
-                <textarea id="issueNotes" placeholder="Notes..." class="w-full p-4 rounded-xl" rows="2"></textarea>
-                <button onclick="confirmIssue()" class="w-full btn-danger py-4 rounded-xl font-black uppercase">Confirm Issue</button>
-            </section>
-
-            <section id="tab-ledger" class="tab-content hidden space-y-4">
-                <div class="glass overflow-hidden">
-                    <table class="w-full text-[11px]">
-                        <thead class="bg-white/5 text-slate-400 uppercase">
-                            <tr><th class="p-4 text-left">Item</th><th class="p-4 text-center">Qty</th><th class="p-4 text-right">Value</th><th class="p-4 text-center">Action</th></tr>
-                        </thead>
-                        <tbody id="ledgerTable" class="divide-y divide-white/5"></tbody>
-                    </table>
+                <input type="text" id="itemName" placeholder="মালামালের বিবরণ" class="w-full p-3 rounded-lg border">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="itemQty" placeholder="পরিমাণ" class="p-3 rounded-lg border">
+                    <input type="text" id="itemUnit" placeholder="একক (যেমন: টি, কেজি)" class="p-3 rounded-lg border">
                 </div>
-            </section>
+                <input type="number" id="itemPrice" placeholder="দর/মূল্য (৳)" class="w-full p-3 rounded-lg border">
+                <button onclick="saveToStock()" class="w-full bg-[#004d40] text-white py-3 rounded-lg font-bold shadow-md hover:bg-[#00332a]">সেভ করুন</button>
+            </div>
+        </section>
 
-            <section id="tab-history" class="tab-content hidden space-y-4">
-                <div class="glass overflow-hidden">
-                    <table class="w-full text-[11px]">
-                        <thead class="bg-white/5 text-slate-400 uppercase">
-                            <tr><th class="p-4 text-left">Date</th><th class="p-4 text-left">Type</th><th class="p-4 text-left">Item</th><th class="p-4 text-center">Qty</th><th class="p-4 text-left">Unit</th></tr>
-                        </thead>
-                        <tbody id="historyTable" class="divide-y divide-white/5"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
+        <section id="tab-ledger" class="tab-content hidden space-y-4">
+            <div class="flex justify-between items-center px-2">
+                <h2 class="font-bold text-[#004d40]">বর্তমান ভাণ্ডার স্থিতি</h2>
+                <span class="text-xs text-red-600 font-bold">* লাল মার্ক = স্টক ৫ এর নিচে</span>
+            </div>
+            <div class="glass-card overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-100 border-b">
+                        <tr>
+                            <th class="p-3">মালামাল</th>
+                            <th class="p-3 text-center">পরিমাণ</th>
+                            <th class="p-3 text-right">মূল্য</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledgerTable" class="divide-y">
+                        </tbody>
+                </table>
+            </div>
+        </section>
 
-        <nav class="fixed bottom-6 left-6 right-6 flex glass p-2 justify-between z-[999]">
-            <button onclick="showTab('folders')" id="btn-folders" class="flex-1 py-4 rounded-2xl active-nav"><i class="fa-solid fa-folder-open"></i></button>
-            <button onclick="showTab('in')" id="btn-in" class="flex-1 py-4 rounded-2xl"><i class="fa-solid fa-plus-circle"></i></button>
-            <button onclick="showTab('out')" id="btn-out" class="flex-1 py-4 rounded-2xl"><i class="fa-solid fa-paper-plane"></i></button>
-            <button onclick="showTab('ledger')" id="btn-ledger" class="flex-1 py-4 rounded-2xl"><i class="fa-solid fa-list-check"></i></button>
-            <button onclick="showTab('history')" id="btn-history" class="flex-1 py-4 rounded-2xl"><i class="fa-solid fa-history"></i></button>
-        </nav>
-    </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-2 shadow-2xl z-50">
+        <button onclick="showTab('in')" id="btn-in" class="flex-1 py-2 rounded-xl active-tab"><i class="fa-solid fa-file-invoice block text-lg"></i><span class="text-[10px]">এন্ট্রি</span></button>
+        <button onclick="showTab('ledger')" id="btn-ledger" class="flex-1 py-2 rounded-xl text-gray-500"><i class="fa-solid fa-boxes-stacked block text-lg"></i><span class="text-[10px]">লেজার</span></button>
+        <button onclick="showTab('report')" id="btn-report" class="flex-1 py-2 rounded-xl text-gray-500"><i class="fa-solid fa-chart-line block text-lg"></i><span class="text-[10px]">রিপোর্ট</span></button>
+    </nav>
 
     <script>
-        const AUTH = "1234";
-        let db = JSON.parse(localStorage.getItem('bfidclpc_v4')) || { folders: ["BEARING", "TIMBER"], items: [], transactions: [] };
-
-        window.onload = () => { if(sessionStorage.getItem('logged') === 'yes') unlock(); };
-        function checkPass() { if(document.getElementById('passInput').value === AUTH) { sessionStorage.setItem('logged', 'yes'); unlock(); } else alert("Wrong Password!"); }
-        function unlock() { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('appBody').classList.remove('hidden'); renderFolders(); }
-        function manualLock() { sessionStorage.removeItem('logged'); location.reload(); }
+        let db = JSON.parse(localStorage.getItem('bfidclpc_v5')) || { items: [], logs: [] };
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('bn-BD');
 
         function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById('tab-' + id).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav'));
-            document.getElementById('btn-' + id).classList.add('active-nav');
-            if(id === 'folders') renderFolders();
-            if(id === 'in') syncSelects();
+            document.getElementById('tab-' + id)?.classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => {
+                b.classList.remove('active-tab');
+                b.classList.add('text-gray-500');
+            });
+            document.getElementById('btn-' + id).classList.add('active-tab');
+            document.getElementById('btn-' + id).classList.remove('text-gray-500');
             if(id === 'ledger') renderLedger();
-            if(id === 'out') syncIssueList();
-            if(id === 'history') renderHistory();
         }
 
-        function addFolder() {
-            const name = document.getElementById('newFolderInput').value.toUpperCase().trim();
-            if(name && !db.folders.includes(name)) { db.folders.push(name); save(); renderFolders(); document.getElementById('newFolderInput').value=''; }
-        }
-
-        function renderFolders() {
-            const grid = document.getElementById('folderGrid');
-            grid.innerHTML = db.folders.map(f => `
-                <div class="glass p-5 relative">
-                    <i class="fa-solid fa-folder text-accent text-2xl mb-2"></i>
-                    <h4 class="font-black text-xs uppercase">${f}</h4>
-                    <p class="text-[9px] text-slate-500">${db.items.filter(i => i.folder === f).length} ITEMS</p>
-                </div>
-            `).join('');
-        }
-
-        function syncSelects() { document.getElementById('folderSelect').innerHTML = db.folders.map(f => `<option>${f}</option>`).join(''); }
-
-        function syncIssueList() { document.getElementById('issueItemSelect').innerHTML = db.items.map(i => `<option value="${i.id}">${i.folder} | ${i.model} (${i.qty})</option>`).join(''); }
-
-        function saveStock() {
-            const folder = document.getElementById('folderSelect').value;
-            const model = document.getElementById('itemModel').value.toUpperCase().trim();
-            const price = parseFloat(document.getElementById('itemPrice').value) || 0;
+        function saveToStock() {
+            const srn = document.getElementById('srnNo').value;
+            const cat = document.getElementById('regCategory').value;
+            const name = document.getElementById('itemName').value.trim();
             const qty = parseFloat(document.getElementById('itemQty').value) || 0;
-            if(!model) return alert("Enter Name!");
+            const price = parseFloat(document.getElementById('itemPrice').value) || 0;
 
-            let item = db.items.find(i => i.model === model && i.folder === folder);
-            if(item) { item.qty += qty; item.price = price; } 
-            else { db.items.push({ id: Date.now(), folder, model, price, qty }); }
+            if(!name || !cat) return alert("সবগুলো ঘর পূরণ করুন!");
 
-            db.transactions.push({ date: new Date().toISOString(), type: 'IN', model, qty, unit: 'STORE', folder });
-            save(); alert("Saved!"); showTab('ledger');
-        }
+            let item = db.items.find(i => i.name === name && i.cat === cat);
+            if(item) {
+                item.qty += qty;
+            } else {
+                db.items.push({ name, cat, qty, price, id: Date.now() });
+            }
 
-        function confirmIssue() {
-            const id = document.getElementById('issueItemSelect').value;
-            const qty = parseFloat(document.getElementById('issueQty').value) || 0;
-            const unit = document.getElementById('issueUnit').value;
-            const item = db.items.find(i => i.id == id);
-            if(item && item.qty >= qty) {
-                item.qty -= qty;
-                db.transactions.push({ date: new Date().toISOString(), type: 'OUT', model: item.model, qty, unit, folder: item.folder });
-                save(); alert("Issued!"); showTab('ledger');
-            } else alert("Insufficient Stock!");
+            db.logs.push({ date: new Date().toISOString(), srn, name, qty, type: 'IN' });
+            save();
+            alert("সফলভাবে স্টক আপডেট হয়েছে!");
+            location.reload();
         }
 
         function renderLedger() {
-            document.getElementById('ledgerTable').innerHTML = db.items.map(i => `
-                <tr class="border-b border-white/5 text-[10px]">
-                    <td class="p-4"><b>${i.model}</b><br><span class="text-accent">${i.folder}</span></td>
-                    <td class="p-4 text-center">${i.qty}</td>
-                    <td class="p-4 text-right">৳${(i.qty * i.price).toLocaleString()}</td>
-                    <td class="p-4 text-center"><button onclick="deleteItem(${i.id})" class="text-red-400"><i class="fa-solid fa-trash"></i></button></td>
+            const table = document.getElementById('ledgerTable');
+            table.innerHTML = db.items.map(i => `
+                <tr class="${i.qty < 5 ? 'low-stock' : ''}">
+                    <td class="p-3">
+                        <div class="font-bold">${i.name}</div>
+                        <div class="text-[10px] opacity-70">${i.cat}</div>
+                    </td>
+                    <td class="p-3 text-center font-bold">${i.qty}</td>
+                    <td class="p-3 text-right">৳${(i.qty * i.price).toLocaleString()}</td>
                 </tr>
             `).join('');
         }
 
-        function deleteItem(id) { if(confirm("Delete item?")) { db.items = db.items.filter(i => i.id != id); save(); renderLedger(); } }
-
-        function renderHistory() {
-            document.getElementById('historyTable').innerHTML = db.transactions.slice().reverse().map(t => `
-                <tr class="border-b border-white/5">
-                    <td class="p-4 text-slate-500">${new Date(t.date).toLocaleDateString()}</td>
-                    <td class="p-4 ${t.type === 'IN' ? 'text-accent' : 'text-red-400'} font-bold">${t.type}</td>
-                    <td class="p-4">${t.model}</td>
-                    <td class="p-4 text-center">${t.qty}</td>
-                    <td class="p-4">${t.unit}</td>
-                </tr>
-            `).join('');
-        }
-
-        function save() { localStorage.setItem('bfidclpc_v4', JSON.stringify(db)); }
+        function save() { localStorage.setItem('bfidclpc_v5', JSON.stringify(db)); }
     </script>
 </body>
 </html>
