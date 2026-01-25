@@ -3,118 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFIDCLPC ERP | Store</title>
+    <title>BFIDCLPC ERP | Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
-        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f4f8; }
-        .glass-card { background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .low-stock { background-color: #ffdce0 !important; color: #d32f2f !important; font-weight: bold; }
-        .nav-active { background: #004d40 !important; color: white !important; }
-        th { background: #004d40; color: white; padding: 12px; font-size: 11px; border: 1px solid #00332a; }
-        td { padding: 10px; border: 1px solid #ddd; text-align: center; font-size: 12px; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f8fafc; }
+        .glass-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .sidebar { transition: 0.3s; transform: translateX(100%); }
+        .sidebar.active { transform: translateX(0); }
+        .folder-card { background: #fff; border: 1px solid #e2e8f0; transition: 0.2s; cursor: pointer; }
+        .folder-card:hover { border-color: #10b981; background: #f0fdf4; }
+        th { background: #0f172a; color: white; padding: 10px; font-size: 11px; }
+        td { border: 1px solid #e2e8f0; padding: 8px; font-size: 12px; text-align: center; }
+        .nav-active { color: #10b981 !important; border-top: 3px solid #10b981; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-24 overflow-x-hidden">
 
-    <header class="bg-[#004d40] text-white p-6 text-center shadow-lg">
-        <h1 class="text-xl font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
-        <p class="text-[10px] opacity-80 uppercase tracking-widest">LPC & Rubber Dam Unit, Kaptai</p>
-    </header>
+    <div id="loginScreen" class="fixed inset-0 bg-[#004d40] z-[9999] flex items-center justify-center">
+        <div class="bg-white p-10 rounded-3xl w-full max-w-sm text-center shadow-2xl mx-4">
+            <h2 class="text-xl font-bold text-gray-800">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h2>
+            <p class="text-emerald-600 font-bold mb-6 tracking-widest">ম্যানেজমেন্ট</p>
+            <input type="password" id="passInput" placeholder="পাসওয়ার্ড দিন" class="w-full p-4 bg-gray-100 rounded-xl text-center text-2xl mb-4 outline-none border-2 border-transparent focus:border-emerald-500">
+            <button onclick="checkPass()" class="w-full bg-[#004d40] text-white py-4 rounded-xl font-bold uppercase tracking-widest">আনলক করুন</button>
+        </div>
+    </div>
 
-    <main class="p-4 max-w-4xl mx-auto space-y-6">
-        
-        <section id="tab-in" class="tab-content glass-card p-6">
-            <h2 class="text-sm font-bold mb-4 text-[#004d40] border-b pb-2">ভাণ্ডার গ্রহণ এন্ট্রি (SRN/Lager)</h2>
-            <div class="space-y-4">
-                <div class="flex gap-2">
-                    <input type="text" id="srnNo" placeholder="SRN নং" class="w-1/3 p-3 border rounded-xl outline-none">
-                    <input type="date" id="entryDate" class="w-2/3 p-3 border rounded-xl outline-none">
+    <div id="appBody" class="hidden">
+        <header class="bg-[#004d40] text-white p-5 sticky top-0 z-40 flex justify-between items-center shadow-md">
+            <div class="text-left">
+                <h1 class="text-base font-bold leading-tight">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
+                <p class="text-[11px] font-semibold text-emerald-300 tracking-[3px] uppercase">ম্যানেজমেন্ট</p>
+            </div>
+            <button onclick="toggleSidebar()" class="text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
+        </header>
+
+        <div id="sidebar" class="sidebar fixed top-0 right-0 h-full w-64 bg-white z-[50] shadow-2xl p-6">
+            <div class="flex justify-between items-center mb-10">
+                <h3 class="font-bold text-gray-800">সেটিংস</h3>
+                <button onclick="toggleSidebar()" class="text-red-500"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <label class="text-xs font-bold text-gray-400 block mb-2 uppercase">পাসওয়ার্ড পরিবর্তন করুন</label>
+                    <input type="password" id="newPass" placeholder="নতুন পাসওয়ার্ড" class="w-full p-3 bg-gray-100 rounded-lg mb-2 text-sm outline-none">
+                    <button onclick="updatePassword()" class="w-full bg-emerald-600 text-white py-2 rounded-lg text-sm font-bold">Update Password</button>
                 </div>
+                <button onclick="clearAllData()" class="w-full text-left text-red-500 text-sm font-bold pt-10 border-t"><i class="fa-solid fa-trash-can mr-2"></i>সব ডাটা মুছুন</button>
+            </div>
+        </div>
+
+        <main class="p-4 max-w-4xl mx-auto">
+            
+            <section id="tab-in" class="tab-content">
+                <div class="glass-card p-6 mb-6">
+                    <h2 class="font-bold text-[#004d40] mb-4 border-b pb-2"><i class="fa-solid fa-cart-plus mr-2"></i>মালামাল গ্রহণ (Stock Entry)</h2>
+                    <div class="space-y-4">
+                        <div class="flex gap-2">
+                            <input type="text" id="srnNo" placeholder="SRN নং" class="w-1/3 p-3 bg-gray-50 border rounded-xl outline-none">
+                            <input type="date" id="entryDate" class="w-2/3 p-3 bg-gray-50 border rounded-xl outline-none">
+                        </div>
+                        
+                        <select id="regSelect" onchange="loadCategoryDropdown()" class="w-full p-4 bg-gray-50 border rounded-xl font-bold text-emerald-800">
+                            <option value="">রেজিস্টার সিলেক্ট করুন</option>
+                            <option value="1">১ নং রেজিস্টার (খুচরা যন্ত্রাংশ)</option>
+                            <option value="2">২ নং রেজিস্টার (ইলেকট্রিক ও হার্ডওয়্যার)</option>
+                            <option value="3">৩ নং রেজিস্টার (অন্যান্য মালামাল)</option>
+                        </select>
+
+                        <select id="catSelect" class="w-full p-4 bg-white border rounded-xl">
+                            <option value="">আগে রেজিস্টার সিলেক্ট করুন</option>
+                        </select>
+
+                        <input type="text" id="itemDetail" placeholder="মালামালের বিস্তারিত নাম (যেমন: পিস্টন রিং)" class="w-full p-4 border-2 border-emerald-50 rounded-xl focus:border-emerald-500 outline-none">
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="number" id="itemQty" placeholder="পরিমাণ" class="p-4 bg-gray-50 border rounded-xl">
+                            <input type="number" id="itemPrice" placeholder="দর (৳)" class="p-4 bg-gray-50 border rounded-xl">
+                        </div>
+                        
+                        <button onclick="saveStock()" class="w-full bg-[#004d40] text-white py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform">Lager Book-এ সেভ করুন</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-ledger" class="tab-content hidden">
+                <div id="folderList" class="grid grid-cols-2 gap-4"></div>
                 
-                <select id="regSelect" onchange="updateItems()" class="w-full p-4 border rounded-xl bg-gray-50 font-bold">
-                    <option value="">রেজিস্টার সিলেক্ট করুন</option>
-                    <option value="1">১ নং রেজিস্টার (খুচরা যন্ত্রাংশ)</option>
-                    <option value="2">২ নং রেজিস্টার (ইলেকট্রিক ও হার্ডওয়্যার)</option>
-                    <option value="3">৩ নং রেজিস্টার (অন্যান্য মালামাল)</option>
-                </select>
-
-                <select id="itemSelect" class="w-full p-4 border rounded-xl bg-white">
-                    <option value="">মালামালের ধরন সিলেক্ট করুন</option>
-                </select>
-
-                <div class="space-y-1">
-                    <label class="text-[10px] font-bold text-gray-500 ml-1">মালামালের বিস্তারিত নাম/বিবরণ লিখুন (যেমন: ইঞ্জিন পার্টস - পিস্টন রিং)</label>
-                    <input type="text" id="itemDetail" placeholder="বিস্তারিত নাম এখানে লিখুন..." class="w-full p-4 border-2 border-green-100 rounded-xl focus:border-green-600 outline-none">
+                <div id="folderDetailView" class="hidden space-y-4">
+                    <button onclick="closeFolder()" class="text-emerald-700 font-bold mb-2"><i class="fa-solid fa-arrow-left mr-2"></i>ফোল্ডারে ফিরে যান</button>
+                    <div class="glass-card overflow-hidden">
+                        <div class="bg-emerald-50 p-4 border-b">
+                            <h3 id="selectedFolderName" class="font-bold text-emerald-900 uppercase"></h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th>তারিখ/SRN</th>
+                                        <th>বিবরণ</th>
+                                        <th>পরিমাণ</th>
+                                        <th>দর</th>
+                                        <th>মোট</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lagerTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+            </section>
+        </main>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="number" id="itemQty" placeholder="পরিমাণ" class="p-4 border rounded-xl">
-                    <input type="number" id="itemPrice" placeholder="দর (৳)" class="p-4 border rounded-xl">
-                </div>
-                
-                <button onclick="saveEntry()" class="w-full bg-[#004d40] text-white py-4 rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-transform">স্টক সেভ করুন</button>
-            </div>
-        </section>
-
-        <section id="tab-ledger" class="tab-content hidden glass-card overflow-hidden">
-            <div class="p-4 bg-gray-100 font-bold text-[#004d40] flex justify-between">
-                <span>ভাণ্ডার খতিয়ান (Ledger)</span>
-                <button onclick="clearData()" class="text-[10px] text-red-500 uppercase">Clear All</button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>তারিখ/SRN</th>
-                            <th>মালামাল ও বিবরণ</th>
-                            <th>পরিমাণ</th>
-                            <th>মোট মূল্য</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ledgerBody"></tbody>
-                </table>
-            </div>
-        </section>
-
-    </main>
-
-    <nav class="fixed bottom-4 left-4 right-4 bg-white flex p-2 glass-card justify-around z-50 border border-gray-200">
-        <button onclick="showTab('in')" id="btn-in" class="flex-1 py-3 rounded-xl nav-active"><i class="fa-solid fa-plus-circle block mb-1"></i><span class="text-[10px]">এন্ট্রি</span></button>
-        <button onclick="showTab('ledger')" id="btn-ledger" class="flex-1 py-3 rounded-xl text-gray-400"><i class="fa-solid fa-book-open block mb-1"></i><span class="text-[10px]">খতিয়ান</span></button>
-    </nav>
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 z-40 shadow-2xl">
+            <button onclick="showTab('in')" id="nav-in" class="flex-1 py-1 nav-active text-gray-400"><i class="fa-solid fa-plus-circle text-xl mb-1"></i><br><span class="text-[10px] font-bold">এন্ট্রি</span></button>
+            <button onclick="showTab('ledger')" id="nav-ledger" class="flex-1 py-1 text-gray-400"><i class="fa-solid fa-folder-open text-xl mb-1"></i><br><span class="text-[10px] font-bold">খতিয়ান</span></button>
+        </nav>
+    </div>
 
     <script>
-        const registerItems = {
-            "1": ["ইঞ্জিন পার্টস", "বিয়ারিং (Bearing)", "পাম্প পার্টস", "লাইনার/পিস্টন", "ফিল্টার", "খুচরা যন্ত্রাংশ"],
-            "2": ["ইলেকট্রিক মালামাল", "হার্ডওয়্যার", "তার/কেবল", "নাট-বোল্ট", "জি আই পাইপ", "কম্পিউটার মালামাল"],
-            "3": ["স্টেশনারী", "টায়ার ও টিউব", "ভি-বেল্ট", "লুব্রিকেন্ট/মবিল", "জেনারেটর পার্টস", "অন্যান্য"]
+        const categoryMap = {
+            "1": ["ইঞ্জিন পার্টস", "বিয়ারিং", "পাম্প পার্টস", "খুচরা যন্ত্রাংশ"],
+            "2": ["ইলেকট্রিক মালামাল", "হার্ডওয়্যার", "নাট-বোল্ট", "জি আই পাইপ"],
+            "3": ["স্টেশনারী", "টায়ার ও টিউব", "লুব্রিকেন্ট", "জেনারেটর পার্টস"]
         };
 
-        let db = JSON.parse(localStorage.getItem('bfidclpc_v7')) || { entries: [] };
+        let db = JSON.parse(localStorage.getItem('bfidclpc_v9')) || { pass: "1234", entries: [] };
 
-        function updateItems() {
+        function checkPass() {
+            const input = document.getElementById('passInput').value;
+            if(input === db.pass) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('appBody').classList.remove('hidden');
+            } else { alert("ভুল পাসওয়ার্ড!"); }
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        function updatePassword() {
+            const newP = document.getElementById('newPass').value;
+            if(newP.length < 4) return alert("পাসওয়ার্ড কমপক্ষে ৪ অক্ষরের হতে হবে!");
+            db.pass = newP;
+            save();
+            alert("পাসওয়ার্ড আপডেট হয়েছে!");
+            toggleSidebar();
+        }
+
+        function loadCategoryDropdown() {
             const reg = document.getElementById('regSelect').value;
-            const itemDropdown = document.getElementById('itemSelect');
-            itemDropdown.innerHTML = '<option value="">মালামালের ধরন সিলেক্ট করুন</option>';
+            const catSelect = document.getElementById('catSelect');
+            catSelect.innerHTML = '<option value="">মালামালের ধরন সিলেক্ট করুন</option>';
             if(reg) {
-                registerItems[reg].forEach(item => {
-                    itemDropdown.innerHTML += `<option value="${item}">${item}</option>`;
-                });
+                categoryMap[reg].forEach(c => catSelect.innerHTML += `<option value="${c}">${c}</option>`);
             }
         }
 
         function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
             document.getElementById('tab-' + id).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active', 'text-gray-400'));
-            document.getElementById('btn-' + id).classList.add('nav-active');
-            if(id === 'ledger') renderLedger();
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
+            document.getElementById('nav-' + id).classList.add('nav-active');
+            if(id === 'ledger') renderFolders();
         }
 
-        function saveEntry() {
-            const date = document.getElementById('entryDate').value;
-            const srn = document.getElementById('srnNo').value;
-            const category = document.getElementById('itemSelect').value;
-            const detail = document.getElementById('itemDetail').value.trim(); // Manual input
+        function saveStock() {
+            const entry = {
+                date: document.getElementById('entryDate').value,
+                srn: document.getElementById('srnNo').value,
+                category: document.getElementById('catSelect').value,
+                detail: document.getElementById('itemDetail').value.trim(),
+                qty: parseFloat(document.getElementById('itemQty').value) || 0,
+                price: parseFloat(document.getElementById('itemPrice').value) || 0,
+                id: Date.now()
+            };
+            if(!entry.category || !entry.detail || entry.qty <= 0) return alert("তথ্য অসম্পূর্ণ!");
+            db.entries.push(entry);
+            save();
+            alert("Lager Book এ যোগ করা হয়েছে!");
+            document.getElementById('itemDetail').value = '';
+            document.getElementById('itemQty').value = '';
+        }
+
+        function renderFolders() {
+            const list = document.getElementById('folderList');
+            document.getElementById('folderDetailView').classList.add('hidden');
+            list.classList.remove('hidden');
+            const uniqueCats = [...new Set(db.entries.map(e => e.category))];
+            list.innerHTML = uniqueCats.map(cat => `
+                <div onclick="openFolder('${cat}')" class="folder-card p-5 rounded-2xl text-center shadow-sm">
+                    <i class="fa-solid fa-folder text-amber-400 text-4xl mb-2"></i>
+                    <h4 class="font-bold text-gray-700 text-sm uppercase">${cat}</h4>
+                    <p class="text-[10px] text-gray-400 font-bold">${db.entries.filter(e => e.category === cat).length} এন্ট্রি</p>
+                </div>
+            `).join('');
+            if(uniqueCats.length === 0) list.innerHTML = `<p class="col-span-2 text-center text-gray-400 py-10">কোন ডাটা নেই</p>`;
+        }
+
+        function openFolder(cat) {
+            document.getElementById('folderList').classList.add('hidden');
+            document.getElementById('folderDetailView').classList.remove('hidden');
+            document.getElementById('selectedFolderName').innerText = cat;
+            const filtered = db.entries.filter(e => e.category === cat);
+            document.getElementById('lagerTableBody').innerHTML = filtered.map(e => `
+                <tr>
+                    <td>${e.date}<br><span class="text-[9px] font-bold text-emerald-600">SRN: ${e.srn}</span></td>
+                    <td class="text-left font-bold">${e.detail}</td>
+                    <td>${e.qty}</td>
+                    <td>${e.price}</td>
+                    <td class="font-bold text-emerald-700">৳${(e.qty * e.price).toLocaleString()}</td>
+                </tr>
+            `).reverse().join('');
+        }
+
+        function closeFolder() {
+            document.getElementById('folderDetailView').classList.add('hidden');
+            document.getElementById('folderList').classList.remove('hidden');
+        }
+
+        function save() { localStorage.setItem('bfidclpc_v9', JSON.stringify(db)); }
+        function clearAllData() { if(confirm("সব ডাটা মুছে যাবে! আপনি কি নিশ্চিত?")) { localStorage.clear(); location.reload(); } }
+    </script>
+</body>
+</html>
