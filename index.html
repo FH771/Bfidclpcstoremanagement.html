@@ -9,168 +9,189 @@
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
         body { font-family: 'Hind Siliguri', sans-serif; background: #f4f7f6; }
 
-        /* SRN Form Styling - Exactly like the Image */
-        .srn-original-style {
-            background-color: #fffde7; /* হালকা হলুদ রঙ */
-            border: 1.5px solid #000;
-            padding: 30px;
-            max-width: 850px;
-            margin: 20px auto;
-            color: #000;
-            position: relative;
-        }
-        .govt-header { text-align: center; margin-bottom: 15px; }
-        .govt-header h1 { font-size: 20px; font-weight: bold; margin: 0; }
-        .govt-header p { font-size: 13px; margin: 2px 0; }
-        .form-title { text-decoration: underline; font-weight: bold; font-size: 16px; margin-top: 10px; display: inline-block; }
+        /* SRN হলুদ ফর্ম স্টাইল */
+        .srn-yellow-form { background-color: #fffde7; border: 1.5px solid #000; padding: 30px; max-width: 850px; margin: 20px auto; color: #000; }
+        
+        /* লেজার বুক নীল খাতা স্টাইল */
+        .ledger-blue-page { background-color: #e3f2fd; border: 2px solid #01579b; padding: 20px; border-radius: 5px; overflow-x: auto; margin-bottom: 40px; }
+        .ledger-table { width: 100%; border-collapse: collapse; background: white; border: 1px solid #01579b; }
+        .ledger-table th { border: 1px solid #01579b; padding: 4px; font-size: 10px; background: #b3e5fc; text-align: center; }
+        .ledger-table td { border: 1px solid #01579b; padding: 6px; font-size: 11px; text-align: center; }
 
-        .form-meta { display: flex; justify-content: space-between; margin: 15px 0; font-size: 14px; font-weight: bold; }
-        .dotted-line { border-bottom: 1.5px dotted #000; display: inline-block; padding: 0 10px; min-width: 100px; }
+        /* সিগনেচার এরিয়া */
+        .sig-section { display: flex; justify-content: space-between; margin-top: 50px; }
+        .sig-box { text-align: center; width: 180px; border-top: 1px solid #000; padding-top: 5px; font-size: 12px; font-weight: bold; }
 
-        .main-table { width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 10px; }
-        .main-table th, .main-table td { border: 1.2px solid #000; padding: 8px; text-align: center; font-size: 13px; }
-        .main-table th { background: #f0f0f0; }
-
-        /* Signature Section */
-        .signature-section { display: flex; justify-content: space-between; margin-top: 60px; font-size: 14px; font-weight: bold; }
-        .sign-box { text-align: center; width: 200px; }
-        .sign-line { border-top: 1.5px solid #000; margin-bottom: 5px; }
-
+        .no-print { display: block; }
         @media print {
-            body { background: white; }
             .no-print { display: none !important; }
-            .srn-original-style { box-shadow: none; border: 1.5px solid #000; margin: 0; width: 100%; }
-            .printable-only { display: block !important; }
+            body { background: white; }
+            .srn-yellow-form, .ledger-blue-page { box-shadow: none; border: 1px solid #000; margin: 0; width: 100%; }
         }
     </style>
 </head>
 <body class="pb-10">
 
-    <header class="bg-[#212121] text-white p-4 no-print flex justify-between items-center shadow-lg">
-        <h1 class="font-bold">BFIDC | ডিজিটাল স্টোর ম্যানেজমেন্ট</h1>
-        <button onclick="showPage('entry')" class="bg-emerald-600 px-4 py-2 rounded font-bold text-xs">নতুন এন্ট্রি</button>
+    <header class="bg-[#1e293b] text-white p-4 no-print flex justify-between items-center shadow-lg">
+        <h1 class="font-bold">BFIDC | ডিজিটাল স্টোর সিস্টেম</h1>
+        <div class="flex gap-2">
+            <button onclick="showSection('entry')" class="bg-emerald-600 px-3 py-1 rounded text-xs">এন্ট্রি</button>
+            <button onclick="showSection('srn')" class="bg-amber-600 px-3 py-1 rounded text-xs">SRN বই</button>
+            <button onclick="showSection('ledger')" class="bg-blue-600 px-3 py-1 rounded text-xs">লেজার বুক</button>
+            <button onclick="showSection('asset')" class="bg-purple-600 px-3 py-1 rounded text-xs">স্থায়ী সম্পদ</button>
+        </div>
     </header>
 
     <main class="p-4">
-        <section id="entry-page" class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md no-print border-t-4 border-emerald-600">
-            <h2 class="font-bold border-b pb-2 mb-4">ভাণ্ডার এন্ট্রি ফরম</h2>
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <input type="text" id="srn-no" placeholder="ক্রমিক নং" class="p-2 border rounded">
-                <input type="date" id="srn-date" class="p-2 border rounded">
+        <section id="entry-sec" class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-md no-print border-t-4 border-emerald-600">
+            <h2 class="font-bold border-b pb-2 mb-4">তথ্য এন্ট্রি করুন</h2>
+            <select id="data-type" class="w-full p-2 border rounded mb-3 font-bold bg-gray-50">
+                <option value="store">ভাণ্ডার মালামাল (SRN & Ledger)</option>
+                <option value="asset">স্থায়ী সম্পদ (Fixed Asset)</option>
+            </select>
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <input type="text" id="srn-no" placeholder="SRN নং / ক্র: নং" class="p-2 border rounded text-sm">
+                <input type="date" id="srn-date" class="p-2 border rounded text-sm">
             </div>
-            <input type="text" id="vendor" placeholder="কোথা হতে প্রাপ্ত" class="w-full p-2 border rounded mb-4">
-            <input type="text" id="item-name" placeholder="মালামালের বিবরণ" class="w-full p-2 border rounded mb-4">
+            <input type="text" id="vendor" placeholder="কোথা হতে প্রাপ্ত / অবস্থান" class="w-full p-2 border rounded mb-3 text-sm">
+            <input type="text" id="item" placeholder="মালামাল / সম্পদের বিবরণ" class="w-full p-2 border rounded mb-3 text-sm">
             <div class="grid grid-cols-3 gap-2 mb-4">
-                <input type="text" id="unit" placeholder="একক" class="p-2 border rounded">
-                <input type="number" id="qty" placeholder="পরিমাণ" class="p-2 border rounded">
-                <input type="number" id="price" placeholder="দর" class="p-2 border rounded">
+                <input type="text" id="unit" placeholder="একক" class="p-2 border rounded text-sm">
+                <input type="number" id="qty" placeholder="পরিমাণ" class="p-2 border rounded text-sm">
+                <input type="number" id="price" placeholder="দর" class="p-2 border rounded text-sm">
             </div>
-            <button onclick="saveData()" class="w-full bg-emerald-700 text-white py-3 rounded font-bold">সংরক্ষণ করুন</button>
+            <button onclick="saveData()" class="w-full bg-slate-800 text-white py-3 rounded font-bold hover:bg-black transition">সংরক্ষণ করুন</button>
         </section>
 
-        <section id="srn-page" class="mt-8 space-y-10">
-            </section>
+        <section id="srn-sec" class="hidden space-y-10"></section>
+
+        <section id="ledger-sec" class="hidden space-y-6">
+            <h2 class="text-center font-bold text-blue-900 underline mb-4">ভাণ্ডার মূল খতিয়ান (নীল খাতা)</h2>
+            <div id="ledger-list"></div>
+        </section>
+
+        <section id="asset-sec" class="hidden bg-white p-6 rounded-lg border-2 border-black">
+            <h2 class="text-center font-bold underline mb-6">স্থায়ী সম্পদ রেজিস্টার</h2>
+            <table class="w-full border-collapse border border-black text-sm">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border border-black p-2">ক্র: নং</th>
+                        <th class="border border-black p-2">সম্পদের বিবরণ</th>
+                        <th class="border border-black p-2">শাখা/অবস্থান</th>
+                        <th class="border border-black p-2">তারিখ</th>
+                    </tr>
+                </thead>
+                <tbody id="asset-body"></tbody>
+            </table>
+        </section>
     </main>
 
     <script>
-        const DB_NAME = "BFIDC_SRN_DATA_FINAL";
-        let store = JSON.parse(localStorage.getItem(DB_NAME)) || [];
+        const DB_KEY = "BFIDC_MASTER_DB";
+        let dataStore = JSON.parse(localStorage.getItem(DB_KEY)) || [];
 
         function saveData() {
-            const data = {
+            const entry = {
                 id: Date.now(),
+                type: document.getElementById('data-type').value,
                 srn: document.getElementById('srn-no').value,
                 date: document.getElementById('srn-date').value,
                 from: document.getElementById('vendor').value,
-                item: document.getElementById('item-name').value,
+                item: document.getElementById('item').value,
                 unit: document.getElementById('unit').value,
                 qty: document.getElementById('qty').value,
                 price: document.getElementById('price').value
             };
-            if(!data.srn || !data.item) return alert("তথ্য পূরণ করুন!");
-            store.push(data);
-            localStorage.setItem(DB_NAME, JSON.stringify(store));
+            if(!entry.item) return alert("বিবরণ লিখুন!");
+            dataStore.push(entry);
+            localStorage.setItem(DB_KEY, JSON.stringify(dataStore));
+            alert("সংরক্ষণ সফল হয়েছে!");
             location.reload();
         }
 
-        function renderData() {
-            const container = document.getElementById('srn-page');
-            container.innerHTML = store.slice().reverse().map(d => `
-                <div class="srn-original-style shadow-lg">
-                    <div class="no-print flex justify-end gap-2 mb-4">
-                        <button onclick="window.print()" class="bg-black text-white px-3 py-1 rounded text-xs">প্রিন্ট</button>
-                        <button onclick="deleteItem(${d.id})" class="text-red-600 border border-red-600 px-3 py-1 rounded text-xs">মুছুন</button>
+        function renderSRN() {
+            const container = document.getElementById('srn-sec');
+            const items = dataStore.filter(d => d.type === 'store').reverse();
+            container.innerHTML = items.map(d => `
+                <div class="srn-yellow-form shadow-lg">
+                    <div class="text-center mb-4">
+                        <h1 class="font-bold text-xl">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
+                        <p class="text-xs">কাপতাই, রাঙামাটি পার্বত্য জেলা।</p>
+                        <span class="underline font-bold text-sm block mt-2">ভাণ্ডার গ্রহণ পত্র (SRN)</span>
                     </div>
-
-                    <div class="govt-header">
-                        <h1>বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
-                        <p>লাম্বার প্রসেসিং কমপ্লেক্স ও ফার্ণিচার ইউনিট</p>
-                        <p>কাপতাই, রাঙামাটি পার্বত্য জেলা।</p>
-                        <span class="form-title">ভাণ্ডার গ্রহণ পত্র</span>
+                    <div class="flex justify-between text-xs font-bold mb-4">
+                        <span>ক্র: নং: ${d.srn}</span>
+                        <span>তারিখ: ${d.date}</span>
                     </div>
-
-                    <div class="form-meta">
-                        <div>ক্রমিক নং - <span class="dotted-line">${d.srn}</span></div>
-                        <div>তারিখ: <span class="dotted-line">${d.date}</span></div>
-                    </div>
-
-                    <div style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">
-                        নিম্ন লিখিত মালামালগুলো <span class="dotted-line" style="min-width: 250px;">${d.from}</span> হইতে অত্র পত্র মোতাবেক বুঝিয়া পাইলাম।
-                    </div>
-
-                    <table class="main-table">
-                        <thead>
-                            <tr>
-                                <th width="5%">ক্র: নং</th>
-                                <th width="45%">মালামালের বিবরণ</th>
-                                <th width="10%">একক</th>
-                                <th width="10%">পরিমাণ</th>
-                                <th width="10%">বিল নং</th>
-                                <th width="10%">দর</th>
-                                <th width="10%">মূল্য</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>১</td>
-                                <td style="text-align: left; font-weight: bold;">${d.item}</td>
-                                <td>${d.unit}</td>
-                                <td>${d.qty}</td>
-                                <td>-</td>
-                                <td>${d.price}</td>
-                                <td class="font-bold">${(d.qty * d.price).toLocaleString()}</td>
-                            </tr>
-                            <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                            <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                        </tbody>
+                    <p class="text-xs font-bold mb-3">প্রাপ্তি: ${d.from}</p>
+                    <table class="w-full border-collapse border border-black text-xs text-center">
+                        <tr class="bg-gray-100">
+                            <th class="border border-black p-1">বিবরণ</th><th class="border border-black p-1">একক</th>
+                            <th class="border border-black p-1">পরিমাণ</th><th class="border border-black p-1">দর</th><th class="border border-black p-1">মূল্য</th>
+                        </tr>
+                        <tr>
+                            <td class="border border-black p-2 font-bold">${d.item}</td><td class="border border-black p-2">${d.unit}</td>
+                            <td class="border border-black p-2">${d.qty}</td><td class="border border-black p-2">${d.price}</td>
+                            <td class="border border-black p-2 font-bold">${(d.qty * d.price).toLocaleString()}</td>
+                        </tr>
                     </table>
-
-                    <div class="signature-section">
-                        <div class="sign-box">
-                            <div class="sign-line"></div>
-                            <p>গ্রহণকারী</p>
-                            <p style="font-size: 11px;">তারিখ-</p>
-                        </div>
-                        <div class="sign-box">
-                            <div class="sign-line"></div>
-                            <p>তদন্তকারী / পরিদর্শক</p>
-                            <p style="font-size: 11px;">তারিখ-</p>
-                        </div>
+                    <div class="sig-section">
+                        <div class="sig-box">গ্রহণকারী</div>
+                        <div class="sig-box">পরিদর্শক</div>
                     </div>
-                    <div style="text-align: left; font-size: 10px; margin-top: 10px;">ফরম-পি-৭</div>
                 </div>
             `).join('');
         }
 
-        function deleteItem(id) {
-            if(confirm("মুছে ফেলবেন?")) {
-                store = store.filter(x => x.id !== id);
-                localStorage.setItem(DB_NAME, JSON.stringify(store));
-                location.reload();
-            }
+        function renderLedger() {
+            const list = document.getElementById('ledger-list');
+            const items = dataStore.filter(d => d.type === 'store');
+            list.innerHTML = items.map(d => `
+                <div class="ledger-blue-page">
+                    <div class="flex justify-between font-bold text-[10px] mb-2 text-blue-900">
+                        <span>মালের নাম: ${d.item}</span>
+                        <span>রেজিস্টার নং: ${d.srn}</span>
+                    </div>
+                    <table class="ledger-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">তারিখ</th><th colspan="3">প্রাপ্তি (Receipt)</th><th colspan="3">বিলি (Issue)</th><th rowspan="2">স্থিতি</th>
+                            </tr>
+                            <tr>
+                                <th>SRN নং</th><th>পরিমাণ</th><th>মূল্য</th><th>বিল নং</th><th>পরিমাণ</th><th>মূল্য</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${d.date}</td><td>${d.srn}</td><td>${d.qty}</td><td>${(d.qty * d.price).toLocaleString()}</td>
+                                <td>-</td><td>-</td><td>-</td><td class="font-bold text-blue-800">${d.qty}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `).join('');
         }
 
-        renderData();
+        function renderAsset() {
+            const body = document.getElementById('asset-body');
+            const items = dataStore.filter(d => d.type === 'asset');
+            body.innerHTML = items.map((d, i) => `
+                <tr>
+                    <td class="border border-black p-2 text-center">${i+1}</td>
+                    <td class="border border-black p-2 font-bold">${d.item}</td>
+                    <td class="border border-black p-2 text-center">${d.from}</td>
+                    <td class="border border-black p-2 text-center">${d.date}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showSection(id) {
+            ['entry-sec', 'srn-sec', 'ledger-sec', 'asset-sec'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id + '-sec').classList.remove('hidden');
+            if(id === 'srn') renderSRN();
+            if(id === 'ledger') renderLedger();
+            if(id === 'asset') renderAsset();
+        }
     </script>
 </body>
 </html>
