@@ -8,90 +8,120 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
-        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f2f5; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f4f8; }
         
-        /* Watermark */
+        /* Watermark Background */
         .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.08; z-index: -1; width: 300px; pointer-events: none; }
 
+        /* Professional Form Design */
+        .input-box { width: 100%; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; outline: none; transition: 0.3s; }
+        .input-box:focus { border-color: #059669; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+
         /* SRN Book Style */
-        .srn-paper { border: 1.5px solid #000; background: #fffde7; padding: 25px; box-shadow: 5px 5px 15px rgba(0,0,0,0.1); max-width: 900px; margin: auto; }
+        .srn-paper { border: 2px solid #000; background: #fffde7; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 900px; margin: auto; position: relative; }
         .govt-table { width: 100%; border-collapse: collapse; border: 1.5px solid #000; margin-top: 10px; }
-        .govt-table th, .govt-table td { border: 1px solid #000; padding: 5px; text-align: center; font-size: 12px; }
-        .govt-table th { background: #eeeeee; }
+        .govt-table th, .govt-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 13px; }
+        .govt-table th { background: #f1f5f9; font-weight: bold; }
 
         /* Blue Ledger Style */
-        .ledger-blue-book { background-color: #a2d2ff; border: 2px solid #0056b3; padding: 15px; overflow-x: auto; border-radius: 8px; }
-        .ledger-table { width: 100%; border-collapse: collapse; border: 1px solid #0056b3; background: #eefbff; }
-        .ledger-table th { border: 1px solid #0056b3; padding: 4px; font-size: 10px; background: #8ecae6; }
-        .ledger-table td { border: 1px solid #0056b3; padding: 6px; font-size: 11px; text-align: center; }
+        .ledger-blue-book { background-color: #a2d2ff; border: 2px solid #0056b3; padding: 20px; border-radius: 12px; overflow-x: auto; }
+        .ledger-table { width: 100%; border-collapse: collapse; background: #fff; }
+        .ledger-table th { border: 1px solid #0056b3; padding: 6px; font-size: 11px; background: #8ecae6; }
+        .ledger-table td { border: 1px solid #0056b3; padding: 8px; font-size: 12px; text-align: center; }
 
-        .red-alert { background-color: #ff5252; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold; }
-        .nav-active { background: #004d40; color: white; border-radius: 8px; }
+        .btn-primary { background: #065f46; color: white; padding: 14px; border-radius: 10px; font-weight: bold; width: 100%; transition: 0.3s; cursor: pointer; }
+        .btn-primary:hover { background: #064e3b; transform: translateY(-2px); shadow: 0 5px 15px rgba(0,0,0,0.2); }
         
-        @media print { .no-print { display: none; } .srn-paper { box-shadow: none; border: 1px solid #000; } }
+        .nav-active { background: #065f46; color: white; }
+        .red-alert { background: #fee2e2; color: #dc2626; font-weight: bold; padding: 2px 6px; border-radius: 5px; }
+        
+        @media print { .no-print { display: none; } .srn-paper { box-shadow: none; border: 1px solid #000; margin: 0; width: 100%; } }
     </style>
 </head>
 <body class="pb-20">
 
     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/02/Bangladesh_Forest_Industries_Development_Corporation_logo.png/220px-Bangladesh_Forest_Industries_Development_Corporation_logo.png" class="watermark" alt="Logo">
 
-    <header class="bg-[#212121] text-white p-4 sticky top-0 z-50 no-print flex justify-between items-center">
+    <header class="bg-[#1e293b] text-white p-5 sticky top-0 z-50 no-print flex justify-between items-center shadow-lg">
         <div>
-            <h1 class="text-md font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
-            <p class="text-[10px] uppercase tracking-widest text-emerald-400">Smart Store Management</p>
+            <h1 class="text-lg font-bold">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h1>
+            <p class="text-xs text-emerald-400 font-semibold tracking-wider">স্মার্ট স্টোর ম্যানেজমেন্ট</p>
         </div>
-        <i class="fa-solid fa-warehouse text-2xl opacity-50"></i>
+        <i class="fa-solid fa-layer-group text-2xl opacity-40"></i>
     </header>
 
-    <main class="p-3 max-w-6xl mx-auto space-y-5">
+    <main class="p-4 max-w-6xl mx-auto space-y-6">
         
-        <div class="flex bg-white p-1 rounded-xl shadow-sm no-print overflow-x-auto text-xs font-bold gap-1">
-            <button onclick="showPage('entry')" id="tab-entry" class="flex-1 py-3 nav-active">ডাটা এন্ট্রি</button>
-            <button onclick="showPage('srn')" id="tab-srn" class="flex-1 py-3">SRN বই</button>
-            <button onclick="showPage('ledger')" id="tab-ledger" class="flex-1 py-3">লেজার বুক</button>
-            <button onclick="showPage('asset')" id="tab-asset" class="flex-1 py-3">স্থায়ী সম্পদ</button>
+        <div class="flex bg-white p-1 rounded-2xl shadow-md no-print overflow-x-auto gap-1">
+            <button onclick="showPage('entry')" id="tab-entry" class="flex-1 py-3 text-sm font-bold nav-active rounded-xl transition">ডাটা এন্ট্রি</button>
+            <button onclick="showPage('srn')" id="tab-srn" class="flex-1 py-3 text-sm font-bold transition">SRN বই</button>
+            <button onclick="showPage('ledger')" id="tab-ledger" class="flex-1 py-3 text-sm font-bold transition">লেজার বুক</button>
+            <button onclick="showPage('asset')" id="tab-asset" class="flex-1 py-3 text-sm font-bold transition">স্থায়ী সম্পদ</button>
         </div>
 
-        <section id="entry-page" class="bg-white p-5 rounded-2xl shadow-sm space-y-4 no-print border-t-4 border-emerald-700">
-            <input type="hidden" id="edit-id">
-            <div class="grid grid-cols-2 gap-3">
-                <input type="text" id="srn-no" placeholder="এস আর এন নং" class="p-3 border rounded-xl outline-none focus:ring-2 ring-emerald-300">
-                <input type="date" id="srn-date" class="p-3 border rounded-xl outline-none">
-            </div>
-            <input type="text" id="from-vendor" placeholder="কোথা হতে প্রাপ্ত (শাখা বা ব্যক্তির নাম)" class="w-full p-3 border rounded-xl outline-none">
+        <section id="entry-page" class="bg-white p-6 rounded-3xl shadow-xl space-y-5 no-print border-t-8 border-emerald-800">
+            <h2 class="text-xl font-bold text-gray-700 border-b pb-3"><i class="fa-solid fa-file-pen mr-2 text-emerald-600"></i>মালামাল গ্রহণ ফরম</h2>
+            <input type="hidden" id="edit-id" value="">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <select id="reg-type" onchange="updateItemList()" class="p-3 border rounded-xl bg-gray-50 font-bold">
-                    <option value="">রেজিস্টার নির্বাচন</option>
-                    <option value="1">১ নং রেজিস্টার</option>
-                    <option value="2">২ নং রেজিস্টার</option>
-                    <option value="3">৩ নং রেজিস্টার</option>
-                </select>
-                <select id="item-cat" class="p-3 border rounded-xl"></select>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-500 ml-1">এস আর এন নং</label>
+                    <input type="text" id="srn-no" placeholder="যেমন: ১০৮১/২২" class="input-box">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-500 ml-1">তারিখ</label>
+                    <input type="date" id="srn-date" class="input-box">
+                </div>
             </div>
-            <textarea id="item-detail" placeholder="মালামালের বিস্তারিত বিবরণ ও সাইজ..." class="w-full p-3 border rounded-xl outline-none h-20"></textarea>
+
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-gray-500 ml-1">কোথা হতে প্রাপ্ত (শাখা বা ব্যক্তির নাম)</label>
+                <input type="text" id="from-vendor" placeholder="শাখা বা সরবারহকারীর নাম" class="input-box">
+            </div>
             
-            <div class="grid grid-cols-3 gap-2">
-                <input type="text" id="unit" placeholder="একক" class="p-3 border rounded-xl">
-                <input type="number" id="qty" placeholder="পরিমাণ" class="p-3 border rounded-xl">
-                <input type="number" id="price" placeholder="দর" class="p-3 border rounded-xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-500 ml-1">রেজিস্টার টাইপ</label>
+                    <select id="reg-type" onchange="updateItemList()" class="input-box font-bold bg-emerald-50 text-emerald-900">
+                        <option value="">নির্বাচন করুন</option>
+                        <option value="1">১ নং রেজিস্টার</option>
+                        <option value="2">২ নং রেজিস্টার</option>
+                        <option value="3">৩ নং রেজিস্টার</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-500 ml-1">মালামালের প্রকার</label>
+                    <select id="item-cat" class="input-box"></select>
+                </div>
             </div>
-            <button id="save-btn" onclick="handleSave()" class="w-full bg-[#004d40] text-white py-4 rounded-xl font-bold uppercase shadow-lg hover:bg-emerald-900 transition">তথ্য সংরক্ষণ করুন</button>
+
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-gray-500 ml-1">বিস্তারিত বিবরণ</label>
+                <textarea id="item-detail" placeholder="মালামালের সাইজ ও অন্যান্য তথ্য..." class="input-box h-24"></textarea>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-3">
+                <input type="text" id="unit" placeholder="একক" class="input-box">
+                <input type="number" id="qty" placeholder="পরিমাণ" class="input-box">
+                <input type="number" id="price" placeholder="দর" class="input-box">
+            </div>
+
+            <button onclick="handleSave()" class="btn-primary">
+                <i class="fa-solid fa-cloud-arrow-up mr-2"></i> তথ্য সংরক্ষণ করুন
+            </button>
         </section>
 
-        <section id="srn-page" class="hidden space-y-6">
-            <div id="srn-container"></div>
-        </section>
+        <section id="srn-page" class="hidden space-y-8"></section>
 
         <section id="ledger-page" class="hidden space-y-6">
-            <div class="no-print mb-4">
-                <input type="text" id="ledger-search" onkeyup="renderLedger()" placeholder="মালামালের নাম লিখে সার্চ..." class="w-full p-3 border-2 border-blue-400 rounded-xl outline-none">
+            <div class="no-print bg-white p-4 rounded-2xl shadow-md border-l-8 border-blue-500">
+                <input type="text" id="ledger-search" onkeyup="renderLedger()" placeholder="মালামালের নাম দিয়ে সার্চ করুন..." class="input-box border-blue-200">
             </div>
             <div id="ledger-container"></div>
         </section>
 
-        <section id="asset-page" class="hidden bg-white p-5 rounded-lg border-2 border-black">
-            <h2 class="text-center font-bold underline mb-4 uppercase">স্থায়ী সম্পদ রেজিস্টার</h2>
+        <section id="asset-page" class="hidden bg-white p-6 rounded-3xl border-2 border-black">
+            <h2 class="text-center font-bold underline mb-6 text-xl uppercase">স্থায়ী সম্পদ রেজিস্টার</h2>
             <table class="govt-table">
                 <thead>
                     <tr>
@@ -101,30 +131,37 @@
                 <tbody id="asset-body"></tbody>
             </table>
         </section>
-
     </main>
 
     <script>
-        // Updated items from images
+        // Database key
+        const DB_KEY = 'BFIDC_SMART_STORE_DATA_V3';
+
         const categories = {
             "1": ["খুচরা যন্ত্রাংশ", "জেনারেটর মালামাল", "বোট/ইঞ্জিন মালামাল", "পাম্পের যন্ত্রাংশ", "জি আই ফিটিংস"],
             "2": ["ইলেকট্রিক মালামাল", "এস টি বি মালামাল", "গ্রাইডিং মালামাল", "টুলস মালামাল", "আয়রন এন্ড স্টিল মালামাল", "লিভারেজ মালামাল", "ওয়েল্ডিং মালামাল", "ওয়্যার রোপ এন্ড ফিটিংস", "মিতসুবিশি জীপ নং রাঙা ঘ ১১-০০৫১", "স' সুইজিং মেশিন", "স' ইকুলাইজিং মেশিন", "এসটিবি কেমিক্যাল মালামাল", "পি.ও.এল/লুব্রিকেন্ট মালামাল", "কম্পিউটার মালামাল"],
             "3": ["স্টেশনারী মালামাল", "নাট/বোল্ট", "টেস্ট হাউস সাপ্লাই মালামাল", "পাইপ এন্ড ফিটিংস মালামাল", "হিনো ট্রাক নং- রাঙামাটি-উ-০৫০০০৩", "টি-বোল্ট মালামাল", "স্পিনিং মালামাল", "জেনারেটর/ফটোকপি মেশিন", "মটর সাইকেল মালামাল"]
         };
 
-        let db = JSON.parse(localStorage.getItem('bfidc_pro_v2')) || [];
+        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
 
         function updateItemList() {
             const reg = document.getElementById('reg-type').value;
             const select = document.getElementById('item-cat');
             select.innerHTML = '<option value="">মালামালের প্রকার</option>';
             if(categories[reg]) {
-                categories[reg].forEach(item => select.innerHTML += `<option value="${item}">${item}</option>`);
+                categories[reg].forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item;
+                    opt.innerHTML = item;
+                    select.appendChild(opt);
+                });
             }
         }
 
         function handleSave() {
             const editId = document.getElementById('edit-id').value;
+            
             const data = {
                 id: editId ? parseInt(editId) : Date.now(),
                 srn: document.getElementById('srn-no').value,
@@ -138,47 +175,65 @@
                 price: parseFloat(document.getElementById('price').value) || 0
             };
 
-            if(!data.srn || !data.cat) return alert("রেজিস্টার ও মালামালের প্রকার নিশ্চিত করুন!");
+            // Validation
+            if(!data.srn || !data.reg || !data.cat || !data.detail) {
+                alert("দয়া করে সব তথ্য (বিশেষ করে রেজিস্টার ও মালের নাম) সঠিক দিন!");
+                return;
+            }
 
             if(editId) {
                 const index = db.findIndex(x => x.id === data.id);
-                db[index] = data;
+                if(index !== -1) db[index] = data;
+                alert("তথ্য আপডেট সফল হয়েছে!");
             } else {
                 db.push(data);
+                alert("তথ্য সফলভাবে সেভ হয়েছে!");
             }
 
-            localStorage.setItem('bfidc_pro_v2', JSON.stringify(db));
-            alert("সফলভাবে সংরক্ষিত হয়েছে!");
-            location.reload();
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+            
+            // Clear Form
+            document.getElementById('edit-id').value = "";
+            document.getElementById('srn-no').value = "";
+            document.getElementById('item-detail').value = "";
+            document.getElementById('qty').value = "";
+            document.getElementById('price').value = "";
+            
+            location.reload(); // Refresh to update all views
         }
 
         function renderSRN() {
-            const container = document.getElementById('srn-container');
+            const container = document.getElementById('srn-page');
             container.innerHTML = db.slice().reverse().map(d => `
-                <div class="srn-paper mb-10">
-                    <div class="no-print flex justify-end gap-2 mb-2">
-                        <button onclick="editData(${d.id})" class="text-blue-700 border border-blue-700 px-3 py-1 rounded text-xs">Edit</button>
-                        <button onclick="deleteData(${d.id})" class="text-red-700 border border-red-700 px-3 py-1 rounded text-xs">Delete</button>
-                        <button onclick="window.print()" class="bg-black text-white px-3 py-1 rounded text-xs">Print</button>
+                <div class="srn-paper mb-12">
+                    <div class="no-print absolute top-3 right-3 flex gap-2">
+                        <button onclick="editData(${d.id})" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md hover:bg-blue-700">এডিট</button>
+                        <button onclick="deleteData(${d.id})" class="bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md hover:bg-red-700">ডিলিট</button>
+                        <button onclick="window.print()" class="bg-black text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md">প্রিন্ট</button>
                     </div>
-                    <div class="text-center">
-                        <h2 class="font-bold text-md uppercase">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h2>
-                        <h3 class="font-bold underline text-sm">ভাণ্ডার গ্রহণ পত্র</h3>
+                    <div class="text-center border-b-2 border-black pb-4 mb-4">
+                        <h2 class="font-bold text-lg uppercase">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h2>
+                        <h3 class="font-bold underline text-sm">ভাণ্ডার গ্রহণ পত্র (SRN)</h3>
                     </div>
-                    <div class="flex justify-between mt-4 font-bold text-[11px]">
-                        <span>এস আর এন নং: ${d.srn}</span>
-                        <span>তারিখ: ${d.date}</span>
+                    <div class="flex justify-between font-bold text-sm">
+                        <span>এস আর এন নং: <span class="border-b border-dotted border-black px-4">${d.srn}</span></span>
+                        <span>তারিখ: <span class="border-b border-dotted border-black px-4">${d.date}</span></span>
                     </div>
-                    <p class="mt-1 font-bold text-[11px] border-b border-black">কোথা হতে প্রাপ্ত: ${d.vendor}</p>
+                    <p class="mt-4 font-bold text-sm">কোথা হতে প্রাপ্ত: <span class="border-b border-dotted border-black px-4 uppercase">${d.vendor}</span></p>
                     <table class="govt-table">
                         <thead>
                             <tr>
-                                <th>ক্র: নং</th><th>মালামালের বিবরণ</th><th>একক</th><th>পরিমাণ</th><th>বিল নং</th><th>কার্ড নং</th><th>দর</th><th>মূল্য</th>
+                                <th width="8%">ক্র: নং</th><th width="40%">মালামালের বিবরণ</th><th width="10%">একক</th><th width="10%">পরিমাণ</th><th width="10%">দর</th><th width="22%">মূল্য (টাকায়)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>১</td><td class="text-left font-bold">${d.cat}<br><small>${d.detail}</small></td><td>${d.unit}</td><td>${d.qty}</td><td>-</td><td>-</td><td>${d.price}</td><td>${(d.qty * d.price).toLocaleString()}</td>
+                                <td>১</td>
+                                <td class="text-left font-bold">${d.cat}<br><span class="text-[11px] font-normal italic">${d.detail}</span></td>
+                                <td>${d.unit}</td>
+                                <td>${d.qty}</td>
+                                <td>${d.price}</td>
+                                <td class="font-bold">${(d.qty * d.price).toLocaleString()} /-</td>
                             </tr>
                         </tbody>
                     </table>
@@ -192,15 +247,15 @@
             const filtered = db.filter(d => d.cat.toLowerCase().includes(query) || d.detail.toLowerCase().includes(query));
 
             container.innerHTML = filtered.map(d => `
-                <div class="ledger-blue-book mb-8">
-                    <div class="flex justify-between items-center mb-2 px-2">
-                        <h3 class="font-bold text-blue-900 underline text-[10px]">ভাণ্ডার মূল খতিয়ান (রেজিস্টার: ${d.reg})</h3>
-                        <span class="text-[10px] font-bold">আইটেম: ${d.cat}</span>
+                <div class="ledger-blue-book mb-10 shadow-lg">
+                    <div class="flex justify-between items-center mb-3 bg-white/30 p-2 rounded-lg">
+                        <h3 class="font-bold text-blue-900 underline text-xs">ভাণ্ডার খতিয়ান (রেজিস্টার: ${d.reg})</h3>
+                        <span class="text-xs font-bold bg-blue-900 text-white px-3 py-1 rounded-full">${d.cat}</span>
                     </div>
                     <table class="ledger-table">
                         <thead>
                             <tr>
-                                <th rowspan="2">তারিখ</th><th rowspan="2">বিবরণ</th><th colspan="3">প্রাপ্তি (Receipt)</th><th rowspan="2">স্থিতি</th>
+                                <th rowspan="2">তারিখ</th><th rowspan="2">বিবরণ</th><th colspan="3">প্রাপ্তি (Receipt)</th><th rowspan="2">বর্তমান স্থিতি</th>
                             </tr>
                             <tr>
                                 <th>SRN নং</th><th>পরিমাণ</th><th>দর</th>
@@ -208,7 +263,12 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>${d.date}</td><td class="text-left px-2 font-bold">${d.detail}</td><td>${d.srn}</td><td>${d.qty}</td><td>${d.price}</td><td class="${d.qty < 5 ? 'red-alert' : 'font-bold'}">${d.qty}</td>
+                                <td>${d.date}</td>
+                                <td class="text-left font-bold">${d.detail}</td>
+                                <td>${d.srn}</td>
+                                <td class="bg-green-50">${d.qty}</td>
+                                <td>${d.price}</td>
+                                <td><span class="${d.qty < 5 ? 'red-alert' : 'font-bold'}">${d.qty} ${d.unit}</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -219,9 +279,14 @@
         function renderAsset() {
             const body = document.getElementById('asset-body');
             body.innerHTML = db.map((d, i) => `
-                <tr>
-                    <td>${i+1}</td><td class="text-left font-bold">${d.cat} (${d.detail})</td><td>${d.vendor}</td><td>${d.date}</td>
-                    <td class="no-print"><button onclick="deleteData(${d.id})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td>
+                <tr class="hover:bg-gray-50">
+                    <td>${i+1}</td>
+                    <td class="text-left px-4 font-bold text-gray-700">${d.cat} (${d.detail})</td>
+                    <td class="font-semibold text-emerald-700 uppercase">${d.vendor}</td>
+                    <td>${d.date}</td>
+                    <td class="no-print p-2">
+                        <button onclick="deleteData(${d.id})" class="text-red-500 hover:text-red-700 transition"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
                 </tr>
             `).join('');
         }
@@ -231,6 +296,7 @@
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
             document.getElementById(id + '-page').classList.remove('hidden');
             document.getElementById('tab-' + id).classList.add('nav-active');
+            
             if(id === 'srn') renderSRN();
             if(id === 'ledger') renderLedger();
             if(id === 'asset') renderAsset();
@@ -238,6 +304,8 @@
 
         function editData(id) {
             const d = db.find(x => x.id === id);
+            if(!d) return;
+
             document.getElementById('edit-id').value = d.id;
             document.getElementById('srn-no').value = d.srn;
             document.getElementById('srn-date').value = d.date;
@@ -249,17 +317,22 @@
             document.getElementById('unit').value = d.unit;
             document.getElementById('qty').value = d.qty;
             document.getElementById('price').value = d.price;
+            
             document.getElementById('save-btn').innerText = "তথ্য আপডেট করুন";
             showPage('entry');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function deleteData(id) {
-            if(confirm("আপনি কি নিশ্চিতভাবে মুছে ফেলতে চান?")) {
+            if(confirm("আপনি কি নিশ্চিতভাবে এই এন্ট্রিটি চিরতরে মুছে ফেলতে চান?")) {
                 db = db.filter(x => x.id !== id);
-                localStorage.setItem('bfidc_pro_v2', JSON.stringify(db));
+                localStorage.setItem(DB_KEY, JSON.stringify(db));
                 location.reload();
             }
         }
+
+        // Initialize
+        renderSRN();
     </script>
 </body>
 </html>
