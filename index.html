@@ -195,4 +195,95 @@
                 <div id="card-${d.id}" class="srn-paper">
                     <div class="no-print flex justify-end gap-2 mb-4">
                         <button onclick="editData(${d.id})" class="bg-blue-600 text-white px-3 py-1 rounded text-xs">এডিট</button>
-                        
+                        <button onclick="deleteData(${d.id})" class="bg-red-600 text-white px-3 py-1 rounded text-xs">ডিলিট</button>
+                        <button onclick="printSpecific('card-${d.id}')" class="bg-black text-white px-3 py-1 rounded text-xs">প্রিন্ট</button>
+                    </div>
+                    <div class="text-center border-b border-black mb-4">
+                        <h2 class="font-bold text-lg uppercase">বাংলাদেশ বনশিল্প উন্নয়ন কর্পোরেশন</h2>
+                        <h3 class="font-bold underline text-sm">ভাণ্ডার গ্রহণ পত্র (SRN)</h3>
+                    </div>
+                    <div class="flex justify-between font-bold text-xs">
+                        <span>এস আর এন নং: ${d.srn}</span>
+                        <span>তারিখ: ${d.date}</span>
+                    </div>
+                    <p class="font-bold text-xs mt-2">কোথা হতে প্রাপ্ত: ${d.vendor}</p>
+                    <table class="govt-table">
+                        <thead>
+                            <tr>
+                                <th>ক্র: নং</th><th>মালামালের বিবরণ</th><th>একক</th><th>পরিমাণ</th><th>দর</th><th>মূল্য</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>১</td><td class="text-left font-bold">${d.cat}<br><small>${d.detail}</small></td><td>${d.unit}</td><td>${d.qty}</td><td>${d.price}</td><td>${(d.qty * d.price).toLocaleString()}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `).join('');
+        }
+
+        function renderLedger() {
+            const q = document.getElementById('ledger-search').value.toLowerCase();
+            const container = document.getElementById('ledger-container');
+            const filtered = db.filter(d => d.cat.toLowerCase().includes(q) || d.detail.toLowerCase().includes(q));
+            container.innerHTML = filtered.map(d => `
+                <div class="ledger-blue-book mb-6">
+                    <h3 class="font-bold text-blue-900 underline text-xs mb-2">খতিয়ান (রেজিস্টার: ${d.reg}) - ${d.cat}</h3>
+                    <table class="ledger-table">
+                        <thead>
+                            <tr>
+                                <th>তারিখ</th><th>বিবরণ</th><th>SRN</th><th>পরিমাণ</th><th>দর</th><th>স্থিতি</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${d.date}</td><td class="text-left font-bold">${d.detail}</td><td>${d.srn}</td><td>${d.qty}</td><td>${d.price}</td><td class="font-bold">${d.qty}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `).join('');
+        }
+
+        function renderAsset() {
+            const body = document.getElementById('asset-body');
+            body.innerHTML = db.map((d, i) => `<tr><td>${i+1}</td><td>${d.cat}</td><td>${d.vendor}</td><td>${d.date}</td><td><button onclick="deleteData(${d.id})" class="text-red-500 no-print">মুছুন</button></td></tr>`).join('');
+        }
+
+        function showPage(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
+            document.getElementById(id + '-page').classList.remove('hidden');
+            document.getElementById('tab-' + id).classList.add('nav-active');
+            if(id === 'srn') renderSRN();
+            if(id === 'ledger') renderLedger();
+            if(id === 'asset') renderAsset();
+        }
+
+        function editData(id) {
+            const d = db.find(x => x.id === id);
+            document.getElementById('edit-id').value = d.id;
+            document.getElementById('srn-no').value = d.srn;
+            document.getElementById('srn-date').value = d.date;
+            document.getElementById('from-vendor').value = d.vendor;
+            document.getElementById('reg-type').value = d.reg;
+            updateItemList();
+            document.getElementById('item-cat').value = d.cat;
+            document.getElementById('item-detail').value = d.detail;
+            document.getElementById('unit').value = d.unit;
+            document.getElementById('qty').value = d.qty;
+            document.getElementById('price').value = d.price;
+            showPage('entry');
+        }
+
+        function deleteData(id) {
+            if(confirm("মুছে ফেলবেন?")) {
+                db = db.filter(x => x.id !== id);
+                localStorage.setItem(DB_KEY, JSON.stringify(db));
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
